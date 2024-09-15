@@ -1,0 +1,84 @@
+spring:
+  profiles:
+    active: local
+    group:
+      local: local, common
+      blue: blue, common, secret
+      green: green, common, secret
+
+server:
+  env: blue
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/study
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        #        default_batch_fetch_size:
+        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+
+server:
+  port: 8080
+  serverAddress: localhost
+
+serverName: local_server
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+server:
+  port: 8080
+  serverAddress: 1234.1234.1234
+
+serverName: blue_server
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: green
+
+server:
+  port: 8081
+  serverAddress: 1234.1234.1234
+
+serverName: green_server
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+
+springdoc:
+  swagger-ui:
+    version: 'v1'
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+#  show-login-endpoint: true
+
+jwt:
+  secret: aaaabbbsdifqbvaesoioegwaaaabbbsdidsfdsfdfsdfsdfsdfsdfsd
+
