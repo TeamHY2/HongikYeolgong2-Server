@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        #        dialect: org.hibernate.dialect.MySQLDialect
+        use_sql_comments: true
+        highlight_sql: true
+    open-in-view: false
+
+jwt:
+  secret: aaaabbbsdifqbvaesoioegwaaaabbbsdidsfdsfdfsdfsdfsdfsdfsd
+
+server:
+  env: test
+  port: 8080
+  serverAddress: localhost
+
+serverName: local_server
