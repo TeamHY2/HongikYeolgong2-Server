@@ -3,6 +3,7 @@ package com.hongik.service;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
+import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
@@ -21,7 +22,15 @@ public class UserService {
 
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
+        checkNicknameDuplication(request.getNickname());
+
         User savedUser = userRepository.save(request.toEntity(bCryptPasswordEncoder.encode(request.getPassword())));
         return UserResponse.of(savedUser);
+    }
+
+    public void checkNicknameDuplication(final String nickname) {
+        if (userRepository.findByNickname(nickname).isPresent()) {
+            throw new AppException(ErrorCode.ALREADY_EXIST_NICKNAME, ErrorCode.ALREADY_EXIST_NICKNAME.getMessage());
+        }
     }
 }
