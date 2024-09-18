@@ -3,6 +3,10 @@ package com.hongik.service;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
+import com.hongik.dto.user.request.UserCreateRequest;
+import com.hongik.dto.user.response.UserResponse;
+import com.hongik.exception.AppException;
+import com.hongik.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,15 +20,8 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public void signUp() {
-        User savedUser = userRepository.save(User.builder()
-                .role(Role.USER)
-                .username("test")
-                .department("도시환경")
-                .nickname("병일이")
-                .password(bCryptPasswordEncoder.encode("123"))
-                .build());
-
-        userRepository.save(savedUser);
+    public UserResponse signUp(UserCreateRequest request) {
+        User savedUser = userRepository.save(request.toEntity(bCryptPasswordEncoder.encode(request.getPassword())));
+        return UserResponse.of(savedUser);
     }
 }
