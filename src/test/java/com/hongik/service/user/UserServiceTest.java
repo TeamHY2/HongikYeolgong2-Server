@@ -5,6 +5,7 @@ import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
+import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
 import com.hongik.service.UserService;
@@ -92,6 +93,45 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.checkNicknameDuplication(request.getNickname()))
                 .isInstanceOf(AppException.class)
                 .hasMessage("이미 존재하는 닉네임입니다.");
+    }
+
+    @DisplayName("회원가입을 진행할 때 중복된 이메일이 존재하면 예외가 발생한다.")
+    @Test
+    void createUserWithDuplicationUsername() {
+        // given
+        final String username = "test@email.com";
+        User user = createUser(username, "password", "nickname1");
+        userRepository.save(user);
+
+        UserCreateRequest request = UserCreateRequest.builder()
+                .username(username)
+                .password("password")
+                .nickname("nickname2")
+                .department("department")
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> userService.signUp(request))
+                .isInstanceOf(AppException.class)
+                .hasMessage("이미 존재하는 이메일입니다.");
+    }
+
+    @DisplayName("이메일 중복검사를 할 때 이미 존재하는 이메일이면 예외가 발생한다.")
+    @Test
+    void checkUsernameWithDuplicationUsername() {
+        // given
+        final String username = "test@email.com";
+        User user = createUser(username, "password", "nickname1");
+        userRepository.save(user);
+
+        UsernameRequest request = UsernameRequest.builder()
+                .username(username)
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> userService.checkUsernameDuplication(request.getUsername()))
+                .isInstanceOf(AppException.class)
+                .hasMessage("이미 존재하는 이메일입니다.");
     }
 
     private User createUser(final String username, final String password, final String nickname) {
