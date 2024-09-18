@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
+import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -249,5 +250,44 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("띄어쓰기, 특수문자는 불가능하고, 2~8자까지 허용합니다."));
+    }
+
+    @DisplayName("이메일 중복검사할 때 이메일은 필수값이다.")
+    @Test
+    void duplicateUsernameWithoutUsername() throws Exception {
+        // given
+        UsernameRequest request = UsernameRequest.builder()
+//                .username("test@email.com")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        post("/api/v1/user/duplicate-username").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("이메일은 필수입니다."));
+    }
+
+    @DisplayName("이메일 중복검사")
+    @Test
+    void duplicateUsername() throws Exception {
+        // given
+        UsernameRequest request = UsernameRequest.builder()
+                .username("test@email.com")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        post("/api/v1/user/duplicate-username").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
