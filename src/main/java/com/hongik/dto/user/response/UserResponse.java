@@ -20,11 +20,15 @@ public class UserResponse {
     @Schema(example = "닉네임")
     private String nickname;
 
+    @Schema(example = "디자인학부")
+    private String department;
+
     @Builder
-    public UserResponse(final Long id, final String username, final String nickname) {
+    public UserResponse(final Long id, final String username, final String nickname, final String department) {
         this.id = id;
         this.username = username;
         this.nickname = nickname;
+        this.department = department;
     }
 
     public static UserResponse of(User user) {
@@ -32,6 +36,7 @@ public class UserResponse {
                 .id(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
+                .department(user.getDepartment())
                 .build();
     }
 }
