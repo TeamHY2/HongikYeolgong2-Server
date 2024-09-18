@@ -1,9 +1,16 @@
 package com.hongik.controller.user;
 
+import com.hongik.dto.ApiResponse;
+import com.hongik.dto.user.request.NicknameRequest;
+import com.hongik.dto.user.request.UserCreateRequest;
+import com.hongik.dto.user.request.UsernameRequest;
+import com.hongik.dto.user.response.UserResponse;
 import com.hongik.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +23,18 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public void singUp() {
-        userService.signUp();
+    public ApiResponse<UserResponse> singUp(@Valid @RequestBody UserCreateRequest request) {
+        return ApiResponse.ok(userService.signUp(request));
     }
+
+    @PostMapping("/duplicate-nickname")
+    public void duplicateNickname(@Valid @RequestBody NicknameRequest request) {
+        userService.checkNicknameDuplication(request.getNickname());
+    }
+
+    @PostMapping("/duplicate-username")
+    public void duplicateUsername(@Valid @RequestBody UsernameRequest request) {
+        userService.checkUsernameDuplication(request.getUsername());
+    }
+
 }
