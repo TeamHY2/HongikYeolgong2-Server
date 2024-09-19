@@ -5,7 +5,7 @@ import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.dto.user.response.UserResponse;
-import com.hongik.service.UserService;
+import com.hongik.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
