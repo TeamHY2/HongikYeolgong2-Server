@@ -7,6 +7,7 @@ import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "User Controller - 유저 컨트롤러", description = "회원가입, 닉네임 중복검사를 진행합니다.")
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
