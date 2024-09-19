@@ -1,4 +1,4 @@
-package com.hongik.service;
+package com.hongik.service.user;
 
 import com.hongik.domain.user.CustomUserDetails;
 import com.hongik.domain.user.User;
