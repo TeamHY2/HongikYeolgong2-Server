@@ -51,7 +51,7 @@ public class SecurityLoginSwagger {
                                             new MediaType().example("{\"error\":\"UNAUTHORIZED\"}"))));
 
                     operation.responses(apiResponses);
-                    operation.addTagsItem("user-controller");
+                    operation.addTagsItem("User Controller - 유저 컨트롤러");
                     operation.summary("로그인");
 
                     PathItem pathItem = new PathItem().post(operation);

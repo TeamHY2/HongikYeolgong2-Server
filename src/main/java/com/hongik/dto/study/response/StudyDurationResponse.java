@@ -1,5 +1,6 @@
 package com.hongik.dto.study.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,8 +10,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public class StudyDurationResponse {
 
+    @Schema(example = "10")
     private Long dailyStudyDuration;
 
+    @Schema(example = "20")
     private Long monthlyStudyDuration;
 
     @Builder
