@@ -8,7 +8,6 @@ import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
-import com.hongik.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
