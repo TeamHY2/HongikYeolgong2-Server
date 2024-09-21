@@ -36,4 +36,8 @@ public class User extends BaseEntity {
         this.department = department;
         this.role = role;
     }
+
+    public void updateProfile(final String nickname) {
+        this.nickname = nickname;
+    }
 }
