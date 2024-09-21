@@ -58,10 +58,12 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -k -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
+#          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "https://hongikyeolgon2.site/env")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
+#            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
+            CURRENT_UPSTREAM=$(curl -s "https://hongikyeolgon2.site/env")
           else
             CURRENT_UPSTREAM=green
           fi
