@@ -38,6 +38,7 @@ jobs:
       - name: Build with Gradle
         run: |
           echo ${{ secrets.APPLICATION_SECRET }} | base64 --decode > ./src/main/resources/application-secret.yml
+          echo ${{ secrets.APPLICATION_OAUTH }} | base64 --decode > ./src/main/resources/application-oauth.yml
           ./gradlew build
 
       - name: Login to DockerHub
@@ -57,10 +58,10 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "https://hongikyeolgong2.site/env")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
+            CURRENT_UPSTREAM=$(curl -s "https://hongikyeolgong2.site/env")
           else
             CURRENT_UPSTREAM=green
           fi

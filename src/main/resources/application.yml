@@ -2,9 +2,9 @@ spring:
   profiles:
     active: local
     group:
-      local: local, common
-      blue: blue, common, secret
-      green: green, common, secret
+      local: local, common, oauth
+      blue: blue, common, secret, oauth
+      green: green, common, secret, oauth
 
 server:
   env: blue
