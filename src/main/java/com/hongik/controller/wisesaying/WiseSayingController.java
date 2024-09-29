@@ -7,11 +7,9 @@ import com.hongik.service.wisesaying.WiseSayingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "WiseSaying Controller - 명언 컨트롤러", description = "명언 저장, 조회 기능입니다.")
@@ -26,5 +24,12 @@ public class WiseSayingController {
     @PostMapping
     public ApiResponse<List<WiseSayingResponse>> createWiseSaying(@RequestBody List<WiseSayingCreateRequest> request) {
         return ApiResponse.ok(wiseSayingService.createWiseSaying(request));
+    }
+
+    @Operation(summary = "명언 조회", description = "명언을 하나씩 조회합니다. 순서는 서버에서 관리합니다.")
+    @GetMapping
+    public ApiResponse<WiseSayingResponse> getWiseSaying() {
+        LocalDate now = LocalDate.now();
+        return ApiResponse.ok(wiseSayingService.getWiseSaying(now));
     }
 }
