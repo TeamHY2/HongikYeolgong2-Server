@@ -5,6 +5,7 @@ import com.hongik.domain.wisesaying.WiseSayingRepository;
 import com.hongik.dto.wisesaying.request.WiseSayingCreateRequest;
 import com.hongik.dto.wisesaying.response.WiseSayingResponse;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ class WiseSayingServiceTest {
 
     @Autowired
     private WiseSayingRepository wiseSayingRepository;
+
+    @AfterEach
+    void tearDown() {
+        wiseSayingRepository.deleteAllInBatch();
+    }
 
     @DisplayName("명언을 List 형식으로 저장한다.")
     @Test
