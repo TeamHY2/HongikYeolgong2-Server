@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,6 +64,26 @@ class WiseSayingControllerTest {
                         post("/api/v1/wise-saying").with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(List.of(request)))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @DisplayName("서버에 저장된 명언을 조회합니다.")
+    @Test
+    void getWiseSaying() throws Exception {
+        // given
+        LocalDate now = LocalDate.now();
+        WiseSayingResponse result = WiseSayingResponse.builder().build();
+
+        BDDMockito.given(wiseSayingService.getWiseSaying(now)).willReturn(result);
+
+        // when // then
+        mockMvc.perform(
+                        get("/api/v1/wise-saying").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
