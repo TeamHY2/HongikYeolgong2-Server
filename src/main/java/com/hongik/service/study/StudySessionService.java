@@ -39,13 +39,22 @@ public class StudySessionService {
         return StudySessionResponse.of(savedStudySession);
     }
 
-    public StudyDurationResponse getStudyDuration(final int year, final int month, final int day, final Long userId) {
+    public StudyDurationResponse getStudyDuration(final LocalDate now, final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
-        Long studyDurationForDay = studySessionRepository.getStudyDurationForDay(userId, year, month, day);
-        Long studyDurationForMonth = studySessionRepository.getStudyDurationForMonth(userId, year, month);
-        return StudyDurationResponse.of(studyDurationForDay, studyDurationForMonth);
+        final int year = now.getYear();
+        final int month = now.getMonthValue();
+        final int day = now.getDayOfMonth();
+
+        String currentSemester = getCurrentSemester(month);
+
+        Long studyDurationWithYear = studySessionRepository.getStudyDurationForYear(userId, year);
+        Long studyDurationWithMonth = studySessionRepository.getStudyDurationForMonth(userId, year, month);
+        Long studyDurationWithDay = studySessionRepository.getStudyDurationForDay(userId, year, month, day);
+        Long studyDurationWithSemester = studySessionRepository.getStudyDurationForSemester(userId, year, currentSemester);
+
+        return StudyDurationResponse.of(studyDurationWithYear, studyDurationWithMonth, studyDurationWithDay, studyDurationWithSemester);
     }
 
     public List<StudyCountResponse> getStudyCount(final int year, final int month, final Long userId) {
@@ -107,5 +116,17 @@ public class StudySessionService {
         return week.entrySet().stream()
                 .map(entry -> StudyCountResponse.of(entry.getKey(), entry.getValue()))
                 .collect(toList());
+    }
+
+    private String getCurrentSemester(final int month) {
+        if (month >= 1 && month <= 2) {
+            return "winter";
+        } else if (month >= 3 && month <= 6) {
+            return "first";
+        } else if (month >= 7 && month <= 8) {
+            return "summer";
+        } else {
+            return "second";
+        }
     }
 }

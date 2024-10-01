@@ -119,16 +119,14 @@ class StudySessionControllerTest {
     void getStudyDuration() throws Exception {
         // given
         StudyDurationResponse result = StudyDurationResponse.builder().build();
+        LocalDate now = LocalDate.of(2024, 10, 1);
 
-        BDDMockito.given(studySessionService.getStudyDuration(2024, 9, 19, 1L))
+        BDDMockito.given(studySessionService.getStudyDuration(now, 1L))
                 .willReturn(result);
 
         // when // then
         mockMvc.perform(
                         get("/api/v1/study/duration").with(csrf())
-                                .param("year", "2024")
-                                .param("month", "9")
-                                .param("day", "19")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())

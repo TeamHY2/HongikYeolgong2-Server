@@ -10,22 +10,32 @@ import lombok.NoArgsConstructor;
 @Getter
 public class StudyDurationResponse {
 
-    @Schema(example = "10")
-    private Long dailyStudyDuration;
+    @Schema(example = "120")
+    private Long studyDurationWithYear;
 
     @Schema(example = "20")
-    private Long monthlyStudyDuration;
+    private Long studyDurationWithMonth;
+
+    @Schema(example = "10")
+    private Long studyDurationWithDay;
+
+    @Schema(example = "50")
+    private Long studyDurationWithSemester;
 
     @Builder
-    public StudyDurationResponse(final Long dailyStudyDuration, final Long monthlyStudyDuration) {
-        this.dailyStudyDuration = dailyStudyDuration;
-        this.monthlyStudyDuration = monthlyStudyDuration;
+    public StudyDurationResponse(final Long studyDurationWithYear, final Long studyDurationWithMonth, final Long studyDurationWithDay, final Long studyDurationWithSemester) {
+        this.studyDurationWithYear = studyDurationWithYear;
+        this.studyDurationWithMonth = studyDurationWithMonth;
+        this.studyDurationWithDay = studyDurationWithDay;
+        this.studyDurationWithSemester = studyDurationWithSemester;
     }
 
-    public static StudyDurationResponse of(final Long dailyStudyDuration, final Long monthlyStudyDuration) {
+    public static StudyDurationResponse of(final Long studyDurationWithYear, final Long studyDurationWithMonth, final Long studyDurationWithDay, final Long studyDurationWithSemester) {
         return StudyDurationResponse.builder()
-                .dailyStudyDuration(dailyStudyDuration)
-                .monthlyStudyDuration(monthlyStudyDuration)
+                .studyDurationWithYear(studyDurationWithYear)
+                .studyDurationWithMonth(studyDurationWithMonth)
+                .studyDurationWithDay(studyDurationWithDay)
+                .studyDurationWithSemester(studyDurationWithSemester)
                 .build();
     }
 }

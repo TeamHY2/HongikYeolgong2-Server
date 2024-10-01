@@ -63,10 +63,12 @@ class StudySessionServiceTest {
                 .containsExactlyInAnyOrder(now, now.plusMinutes(5));
     }
     
-    @DisplayName("유저의 특정 날짜(Month, Day)에 대한 공부 시간 조회")
+    @DisplayName("서버 시간 기준으로 유저의 날짜(Year, Month, Day, Semester)에 대한 공부 시간 조회")
     @Test
     void getStudyDuration() {
         // given
+        LocalDate now = LocalDate.of(2024, 9, 20);
+        // 9월은 2학기다.
         User user = createUser("username", "password", "nickname", "디자인학부");
         userRepository.save(user);
 
@@ -82,13 +84,13 @@ class StudySessionServiceTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
 
         // when
-        StudyDurationResponse studyDurationResponse = studySessionService.getStudyDuration(2024, 9, 19, user.getId());
+        StudyDurationResponse studyDurationResponse = studySessionService.getStudyDuration(now, user.getId());
 
         // then
         assertThat(studyDurationResponse).isNotNull();
         assertThat(studyDurationResponse)
-                .extracting("dailyStudyDuration", "monthlyStudyDuration")
-                .containsExactlyInAnyOrder(120L, 180L);
+                .extracting("studyDurationWithYear", "studyDurationWithMonth", "studyDurationWithDay", "studyDurationWithSemester")
+                .containsExactly(180L, 180L, 60L, 180L);
     }
 
     @DisplayName("유저의 특정 날짜(Month, Day)에 대한 공부 횟수 조회")
