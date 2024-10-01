@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface StudySessionRepository extends JpaRepository<StudySession, Long> {
@@ -43,4 +44,11 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             "WHERE s.user_id = :userId " +
             "GROUP BY DATE(s.start_time)", nativeQuery = true)
     List<Object[]> getStudyCountByAll(@Param("userId") Long userId);
+
+    @Query(value = "SELECT DATE(s.start_time) AS date, COUNT(*) AS studyCount " +
+            "FROM study_session s " +
+            "WHERE s.user_id = :userId " +
+            "and DATE(s.start_time) in :dates " +
+            "GROUP BY DATE(s.start_time)", nativeQuery = true)
+    List<Object[]> getStudyCountByWeek(@Param("userId") Long userId, List<LocalDate> dates);
 }

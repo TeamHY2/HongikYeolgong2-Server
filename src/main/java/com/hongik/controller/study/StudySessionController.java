@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "Study Controller - 스터디세션 컨트롤러", description = "열람실을 이용한 시간을 등록하고, 나의 공부 시간, 공부 횟수를 조회합니다.")
@@ -56,4 +59,14 @@ public class StudySessionController {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(studySessionService.getStudyCountAll(userId));
     }
+
+    @Operation(summary = "현재 날짜 기준으로 주단위 월, 일, 공부 횟수를 가져옵니다.", description = "한 주에 대한 공부 횟수를 조회합니다.")
+    @GetMapping("/week")
+    public ApiResponse<List<StudyCountResponse>> getStudyCountOfWeek(Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        LocalDate today = LocalDate.now();
+
+        return ApiResponse.ok(studySessionService.getStudyCountOfWeek(today, userId));
+    }
+
 }
