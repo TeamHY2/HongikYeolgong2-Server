@@ -14,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -68,6 +71,41 @@ public class StudySessionService {
                         ((java.sql.Date) result[0]).toLocalDate(),
                         ((Number) result[1]).longValue()
                 ))
+                .collect(toList());
+    }
+
+    public List<StudyCountResponse> getStudyCountOfWeek(LocalDate today, final Long userId) {
+        // 이번 주의 시작일 (월요일)
+        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+
+        // 이번 주의 종료일 (일요일)
+        LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(java.time.DayOfWeek.SUNDAY));
+        List<LocalDate> dates = new ArrayList<>();
+
+        // 시작일부터 종료일까지 날짜 출력
+        for (LocalDate date = startOfWeek; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
+            dates.add(date);
+        }
+
+        // 일주일을 Map에 담는다.
+        Map<LocalDate, Long> week = new LinkedHashMap<>();
+        for (LocalDate date : dates) {
+            week.put(date, 0L);
+        }
+
+        // Controller에서 받은 한 주의 날짜의 공부 횟수를 조회한다. -> 공부 횟수가 존재하지 않으면 값이 나오지 않는다.
+        List<Object[]> results = studySessionRepository.getStudyCountByWeek(userId, dates);
+
+        // 위 쿼리를 이용하여 Map에 존재하면 쿼리 조회 결과(공부 횟수)로 덮어씌운다.
+        for (Object[] result : results) {
+            LocalDate localDate = ((Date) result[0]).toLocalDate();
+            if (week.containsKey(localDate)) {
+                week.put(localDate, (Long) result[1]);
+            }
+        }
+
+        return week.entrySet().stream()
+                .map(entry -> StudyCountResponse.of(entry.getKey(), entry.getValue()))
                 .collect(toList());
     }
 }

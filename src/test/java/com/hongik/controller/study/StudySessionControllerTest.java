@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -151,6 +152,27 @@ class StudySessionControllerTest {
                         get("/api/v1/study/count").with(csrf())
                                 .param("year", "2024")
                                 .param("month", "9")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @DisplayName("현재 날짜 기준으로 주단위 월, 일, 공부 횟수를 가져옵니다.")
+    @Test
+    void getStudyCountOfWeek() throws Exception {
+        // given
+        List<StudyCountResponse> result = List.of();
+
+        BDDMockito.given(studySessionService.getStudyCountOfWeek(LocalDate.now(), 1L))
+                .willReturn(result);
+
+        // when // then
+        mockMvc.perform(
+                        get("/api/v1/study/week").with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
