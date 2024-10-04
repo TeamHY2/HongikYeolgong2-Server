@@ -1,10 +1,12 @@
 package com.hongik.service.auth;
 
+import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.auth.request.LoginRequest;
 import com.hongik.dto.auth.response.GoogleInfoResponse;
 import com.hongik.dto.auth.response.TokenResponse;
+import com.hongik.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class AuthService {
     private final UserRepository userRepository;
 
     private final GoogleLoginService googleLoginService;
+    private final JwtUtil jwtUtil;
 
     public String getGoogleLoginView() {
 
@@ -33,16 +36,21 @@ public class AuthService {
     }
 
     public TokenResponse login(LoginRequest request) {
+        User user = null;
         String socialPlatform = request.getSocialPlatform();
         if (socialPlatform.equals("google")) {
             GoogleInfoResponse googleInfoResponse = googleLoginService.login(request);
-            User user = userRepository.findByUsername(googleInfoResponse.getEmail()).get();
-            System.out.println("user.getDepartment() = " + user.getDepartment());
-            System.out.println("user.getId() = " + user.getId());
-            System.out.println("user.getNickname() = " + user.getNickname());
-            return TokenResponse.of(user.getUsername());
+
+            if (userRepository.findByUsername(googleInfoResponse.getEmail()).isPresent()) {
+                user = userRepository.findByUsername(googleInfoResponse.getEmail()).get();
+            } else {
+                user = userRepository.save(User.builder()
+                        .username(googleInfoResponse.getEmail())
+                        .role(Role.GUEST)
+                        .build());
+            }
         }
 
-        return null;
+        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L));
     }
 }
