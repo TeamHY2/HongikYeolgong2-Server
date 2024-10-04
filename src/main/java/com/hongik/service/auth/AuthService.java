@@ -7,6 +7,8 @@ import com.hongik.dto.auth.request.LoginRequest;
 import com.hongik.dto.auth.response.GoogleInfoResponse;
 import com.hongik.dto.auth.response.TokenResponse;
 import com.hongik.jwt.JwtUtil;
+import com.hongik.service.auth.apple.AppleSocialLoginService;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class AuthService {
     private final UserRepository userRepository;
 
     private final GoogleLoginService googleLoginService;
+    private final AppleSocialLoginService appleSocialLoginService;
     private final JwtUtil jwtUtil;
 
     public String getGoogleLoginView() {
@@ -46,6 +49,18 @@ public class AuthService {
             } else {
                 user = userRepository.save(User.builder()
                         .username(googleInfoResponse.getEmail())
+                        .role(Role.GUEST)
+                        .build());
+            }
+        } else if (socialPlatform.equals("apple")) {
+            Claims appleInfoResponse = appleSocialLoginService.login(request);
+            String email = appleInfoResponse.get("email", String.class);
+
+            if (userRepository.findByUsername(email).isPresent()) {
+                user = userRepository.findByUsername(email).get();
+            } else {
+                user = userRepository.save(User.builder()
+                        .username(email)
                         .role(Role.GUEST)
                         .build());
             }
