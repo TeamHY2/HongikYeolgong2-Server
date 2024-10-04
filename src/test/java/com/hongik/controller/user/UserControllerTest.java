@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -199,7 +200,7 @@ class UserControllerTest {
 
         // when // then
         mockMvc.perform(
-                        post("/api/v1/user/duplicate-nickname").with(csrf())
+                        get("/api/v1/user/duplicate-nickname").with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -217,7 +218,7 @@ class UserControllerTest {
 
         // when // then
         mockMvc.perform(
-                        post("/api/v1/user/duplicate-nickname").with(csrf())
+                        get("/api/v1/user/duplicate-nickname").with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -239,7 +240,7 @@ class UserControllerTest {
 
         // when // then
         mockMvc.perform(
-                        post("/api/v1/user/duplicate-nickname").with(csrf())
+                        get("/api/v1/user/duplicate-nickname").with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
