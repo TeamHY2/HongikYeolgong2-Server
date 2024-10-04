@@ -1,12 +1,4 @@
-spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-name: google
-            client-id: 123123123123-fousdof2fcnxvmvn3wekqwej2.apps.googleusercontent.com
-            client-secret: ABCDEFG-ABCDE_a1a2a3a4a5a6a67a6a5a45a4
-            scope:
-              - profile
-              - email
+google:
+  client-id: 1234123412341234-1a2a3a4a4a3a3a4a3a2.apps.googleusercontent.com
+  client-secret: ABCDEFG-ASDQWEASDZXCASDQWEASDZXC
+  redirect-url: https://hongikyeolgong2.kr/api/v1/v1/v2
