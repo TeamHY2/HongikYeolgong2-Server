@@ -3,6 +3,7 @@ package com.hongik.controller.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
+import com.hongik.dto.user.request.UserJoinRequest;
 import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -288,5 +289,70 @@ class UserControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("회원가입")
+    @Test
+    void joinUser() throws Exception {
+        // given
+        UserJoinRequest request = UserJoinRequest.builder()
+                .nickname("nickname")
+                .department("department")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        post("/api/v1/user/join").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @DisplayName("회원가입할 때 닉네임은 필수값이다.")
+    @Test
+    void joinUserWithoutNickname() throws Exception {
+        // given
+        UserJoinRequest request = UserJoinRequest.builder()
+//                .nickname("nickname")
+                .department("department")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        post("/api/v1/user/join").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("닉네임은 필수입니다."));
+    }
+
+    @DisplayName("회원가입할 때 학과는 필수값이다.")
+    @Test
+    void joinUserWithoutDepartment() throws Exception {
+        // given
+        UserJoinRequest request = UserJoinRequest.builder()
+                .nickname("nickname")
+//                .department("department")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        post("/api/v1/user/join").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("학과는 필수입니다."));
     }
 }

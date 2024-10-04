@@ -5,6 +5,7 @@ import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
+import com.hongik.dto.user.request.UserJoinRequest;
 import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
@@ -53,6 +54,28 @@ class UserServiceTest {
         assertThat(userResponse)
                 .extracting("username", "nickname", "department")
                 .containsExactlyInAnyOrder("test@email.com", "nickname", "department");
+    }
+
+    @DisplayName("닉네임과 학과를 입력하여 회원가입을 완료한다.")
+    @Test
+    void joinUser() {
+        // given
+        User user = joinUser("user@gmail.com");
+        userRepository.save(user);
+
+        UserJoinRequest request = UserJoinRequest.builder()
+                .nickname("nickname")
+                .department("department")
+                .build();
+
+        // when
+        UserResponse userResponse = userService.join(request, user.getId());
+
+        // then
+        assertThat(userResponse.getId()).isNotNull();
+        assertThat(userResponse)
+                .extracting("username", "nickname", "department")
+                .containsExactlyInAnyOrder("user@gmail.com", "nickname", "department");
     }
 
     @DisplayName("회원가입을 진행할 때 중복된 닉네임이 존재하면 예외가 발생한다.")
@@ -140,6 +163,13 @@ class UserServiceTest {
                 .role(Role.USER)
                 .department("department")
                 .nickname(nickname)
+                .build();
+    }
+
+    private User joinUser(final String username) {
+        return User.builder()
+                .username(username)
+                .role(Role.GUEST)
                 .build();
     }
 }
