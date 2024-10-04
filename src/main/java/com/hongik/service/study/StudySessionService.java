@@ -5,9 +5,7 @@ import com.hongik.domain.study.StudySessionRepository;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
-import com.hongik.dto.study.response.StudyCountResponse;
-import com.hongik.dto.study.response.StudyDurationResponse;
-import com.hongik.dto.study.response.StudySessionResponse;
+import com.hongik.dto.study.response.*;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -60,7 +60,7 @@ public class StudySessionService {
     public List<StudyCountResponse> getStudyCount(final int year, final int month, final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
-        
+
         List<Object[]> results = studySessionRepository.getStudyCountByMonth(userId, year, month);
         return results.stream()
                 .map(result -> StudyCountResponse.of(
@@ -116,6 +116,44 @@ public class StudySessionService {
         return week.entrySet().stream()
                 .map(entry -> StudyCountResponse.of(entry.getKey(), entry.getValue()))
                 .collect(toList());
+    }
+
+    public List<StudyRankingResponse> getStudyDurationRanking(final LocalDate today) {
+        // 해당 연도에 year과 주차를 구한다.
+        int year = today.getYear();
+//        int week = today.get(WeekFields.of(Locale.FRANCE).weekOfYear());
+        WeekFields weekFields = WeekFields.ISO;
+        int week = today.get(weekFields.weekOfYear());
+        int yearWeek = year * 100 + week;
+        System.out.println("year = " + year);
+        System.out.println("today.getMonthValue() = " + today.getMonthValue());
+        System.out.println("today.getDayOfMonth() = " + today.getDayOfMonth());
+        System.out.println("yearWeek = " + yearWeek);
+
+        // ex) 202440 데이터를 넣는다.
+        List<Object[]> results = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek);
+        // 202439 데이터를 넣는다. (이전 랭킹과 비교하기 위함)
+        List<Object[]> results2 = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek - 1);
+
+        // 이전 주차에 랭킹을 department, 순위를 담는다.
+        Map<String, Integer> previousResult = new HashMap<>();
+        for (Object[] result : results2) {
+            previousResult.put((String) result[0], ((Number) result[2]).intValue());
+        }
+
+        List<StudyRankingResponse> response = new ArrayList<>();
+        // 현재 results의 순위와, 이전 주차 previousResult.get("department")의 순위를 비교하여 출력한다.
+        for (Object[] result : results) {
+            response.add(
+                    StudyRankingResponse.of(
+                            (String) result[0],
+                            ((Number) result[1]).longValue(),
+                            ((Number) result[2]).intValue(),
+                            previousResult.get((String) result[0])
+                    )
+            );
+        }
+        return response;
     }
 
     private String getCurrentSemester(final int month) {

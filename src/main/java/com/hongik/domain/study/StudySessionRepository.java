@@ -114,4 +114,26 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 //            "FROM study_session s " +
 //            "WHERE s.user_id = :userId", nativeQuery = true)
 //    Long getTotalStudyTime(@Param("userId") Long userId, @Param("year") int year, @Param("month") int month, @Param("date") LocalDate date);
+
+    // test
+    @Query(value = "SELECT u.department, " +
+            "COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) AS minute, " +
+            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) DESC) as ranking " +
+            "FROM users u " +
+            "LEFT JOIN study_session s ON u.id = s.user_id " +
+            "AND YEARWEEK(s.start_time, 1) = :weekYear " +
+            "GROUP BY u.department " +
+            "ORDER BY minute DESC", nativeQuery = true)
+    List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
+
+    // main
+//    @Query(value = "SELECT u.department, " +
+//            "SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)) AS totalStudyTime, " +
+//            "DENSE_RANK() over (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) DESC) AS ranking " +
+//            "FROM study_session s " +
+//            "JOIN users u ON s.user_id = u.id " +
+//            "WHERE YEARWEEK(s.start_time, 1) = :weekYear " +
+//            "GROUP BY u.department " +
+//            "ORDER BY totalStudyTime DESC", nativeQuery = true)
+//    List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
 }

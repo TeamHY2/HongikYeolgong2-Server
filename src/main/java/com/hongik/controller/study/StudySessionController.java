@@ -2,14 +2,13 @@ package com.hongik.controller.study;
 
 import com.hongik.dto.ApiResponse;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
-import com.hongik.dto.study.response.StudyCountResponse;
-import com.hongik.dto.study.response.StudyDurationResponse;
-import com.hongik.dto.study.response.StudySessionResponse;
+import com.hongik.dto.study.response.*;
 import com.hongik.service.study.StudySessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,8 +44,8 @@ public class StudySessionController {
     @Operation(summary = "특정 날짜 공부 횟수 조회", description = "해당 년, 월에 대한 데이터를 넣어주세요.")
     @GetMapping("/count")
     public ApiResponse<List<StudyCountResponse>> getStudyCount(@RequestParam int year,
-                                                              @RequestParam int month,
-                                                              Authentication authentication) {
+                                                               @RequestParam int month,
+                                                               Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(studySessionService.getStudyCount(year, month, userId));
     }
@@ -60,6 +59,7 @@ public class StudySessionController {
 
     /**
      * 홈 화면 명언과 함께 나타낼 데이터다.
+     *
      * @param authentication
      * @return
      */
@@ -72,4 +72,15 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.getStudyCountOfWeek(today, userId));
     }
 
+    @Operation(summary = "현재 날짜(연, 월, 일)기준으로 주차를 구하고 주차별 랭킹을 가져온다.", description = "2024-10-1과 같은 데이터를 제공하면 랭킹을 구할 수 있습니다.")
+    @GetMapping("/ranking")
+    public ApiResponse<List<StudyRankingResponse>> getStudyDurationRanking(Authentication authentication,
+                                                                           @RequestParam int year,
+                                                                           @RequestParam int month,
+                                                                           @RequestParam int day) {
+        Long userId = Long.parseLong(authentication.getName());
+        LocalDate today = LocalDate.of(year, month, day);
+
+        return ApiResponse.ok(studySessionService.getStudyDurationRanking(today));
+    }
 }
