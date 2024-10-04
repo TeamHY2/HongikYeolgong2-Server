@@ -37,7 +37,9 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public void updateProfile(final String nickname) {
+    public void join(final String nickname, final String department) {
         this.nickname = nickname;
+        this.department = department;
+        this.role = Role.USER;
     }
 }
