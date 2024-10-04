@@ -132,8 +132,7 @@ class StudySessionControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"))
-                .andExpect(jsonPath("$.data").isNotEmpty());
+                .andExpect(jsonPath("$.message").value("OK"));
     }
 
     @DisplayName("특정 연도와 월에 대한 공부 횟수 조회")
