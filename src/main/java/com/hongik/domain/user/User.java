@@ -1,11 +1,15 @@
 package com.hongik.domain.user;
 
 import com.hongik.domain.BaseEntity;
+import com.hongik.domain.study.StudySession;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -27,6 +31,9 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<StudySession> studySessions = new ArrayList<>();
 
     @Builder
     public User(final String username, final String password, final String nickname, final String department, final Role role) {

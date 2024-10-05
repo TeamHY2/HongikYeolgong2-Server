@@ -7,9 +7,10 @@ import com.hongik.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Auth Controller - 소셜 로그인 컨트롤러", description = "Apple, Google와 code를 넣어주세요.")
+@Tag(name = "Auth Controller - 소셜 로그인 컨트롤러", description = "로그인할 때 Apple 또는 Google, id_token을 넣어주세요.")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -28,11 +29,18 @@ public class AuthController {
 //        return ApiResponse.ok(authService.login(request));
 //    }
 
-    @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, code를 넣어주세요.")
+    @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, id_token을 넣어주세요.")
     @PostMapping("/login")
     public ApiResponse<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
         System.out.println("request = " + request.getId_token());
         System.out.println("request.getSocialPlatform() = " + request.getSocialPlatform());
         return ApiResponse.ok(authService.login(request));
+    }
+
+    @Operation(summary = "회원탈퇴", description = "회원탈퇴 기능입니다. 현재 HardDelete")
+    @DeleteMapping
+    public void deleteUser(Authentication authentication){
+        Long userId = Long.parseLong(authentication.getName());
+        authService.deleteUser(userId);
     }
 }
