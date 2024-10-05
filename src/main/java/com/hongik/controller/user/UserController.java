@@ -52,4 +52,11 @@ public class UserController {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(userService.join(request, userId));
     }
+
+    @Operation(summary = "본인 프로필 정보 조회", description = "닉네임과 학과를 반환합니다.")
+    @GetMapping("/me")
+    public ApiResponse<UserResponse> getUserInfo(Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        return ApiResponse.ok(userService.getUserInfo(userId));
+    }
 }

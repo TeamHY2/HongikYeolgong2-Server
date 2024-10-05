@@ -54,4 +54,11 @@ public class UserService {
         user.join(request.getNickname(), request.getDepartment());
         return UserResponse.of(user);
     }
+
+    public UserResponse getUserInfo(final Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
+
+        return UserResponse.of(user);
+    }
 }
