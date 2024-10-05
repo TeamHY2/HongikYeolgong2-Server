@@ -51,7 +51,7 @@ class WeeklyServiceTest {
     void createWeekFieldsWithDuplicateYear() {
         // given
         final int year = 2024;
-        Weekly weekly = createWeekFields(year);
+        Weekly weekly = createWeekFields(year, 202401);
         weeklyRepository.save(weekly);
 
         // when // then
@@ -60,10 +60,33 @@ class WeeklyServiceTest {
                 .hasMessage("이미 존재하는 연도에 주차데이터입니다.");
     }
 
-    private Weekly createWeekFields(final int year) {
+    @DisplayName("입력한 연도에 대한 주차 데이터를 조회한다.")
+    @Test
+    void getWeeklyFields() {
+        // given
+        final int year = 2024;
+        Weekly weekly1 = createWeekFields(year, 202401);
+        Weekly weekly2 = createWeekFields(year, 202402);
+        Weekly weekly3 = createWeekFields(year, 202403);
+        weeklyRepository.saveAll(List.of(weekly1, weekly2, weekly3));
+
+        // when
+        List<WeeklyResponse> weeklyFields = weeklyService.getWeeklyFields(year);
+
+        // then
+        assertThat(weeklyFields).hasSize(3)
+                .extracting("year", "weekNumber")
+                .containsExactly(
+                        tuple(2024, 202401),
+                        tuple(2024, 202402),
+                        tuple(2024, 202403)
+                );
+    }
+
+    private Weekly createWeekFields(final int year, final int weekNumber) {
         return Weekly.builder()
                 .years(year)
-                .weekNumber(202401)
+                .weekNumber(weekNumber)
                 .weekName("weekName")
                 .build();
     }

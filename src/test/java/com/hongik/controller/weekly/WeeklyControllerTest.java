@@ -11,7 +11,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,5 +63,18 @@ class WeeklyControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("서버 기준 연도에 대한 주차 데이터 조회")
+    @WithMockUser(username = "1", roles = "USER")
+    @Test
+    void getWeeklyFields() throws Exception {
+
+        // when // then
+        mockMvc.perform(
+                        get("/api/v1/week-field").with(csrf())
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
