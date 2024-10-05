@@ -96,4 +96,12 @@ public class WeeklyService {
 
         return dates;
     }
+
+    public List<WeeklyResponse> getWeeklyFields(final int year) {
+        List<Weekly> weeklyList = weeklyRepository.findAllByYears(year);
+
+        return weeklyList.stream()
+                .map(WeeklyResponse::of)
+                .toList();
+    }
 }

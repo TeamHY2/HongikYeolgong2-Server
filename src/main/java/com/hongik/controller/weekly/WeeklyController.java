@@ -5,11 +5,9 @@ import com.hongik.service.weekly.WeeklyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -24,5 +22,11 @@ public class WeeklyController {
     public ResponseEntity<List<WeeklyResponse>> createWeekFields(@RequestParam int year) {
         List<WeeklyResponse> weekFields = weeklyService.createWeekFields(year);
         return ResponseEntity.ok(weekFields);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<WeeklyResponse>> getWeeklyFields() {
+        int year = LocalDate.now().getYear();
+        return ResponseEntity.ok(weeklyService.getWeeklyFields(year));
     }
 }
