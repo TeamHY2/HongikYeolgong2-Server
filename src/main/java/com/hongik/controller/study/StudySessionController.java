@@ -72,15 +72,12 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.getStudyCountOfWeek(today, userId));
     }
 
-    @Operation(summary = "현재 날짜(연, 월, 일)기준으로 주차를 구하고 주차별 랭킹을 가져온다.", description = "2024-10-1과 같은 데이터를 제공하면 랭킹을 구할 수 있습니다.")
+    @Operation(summary = "주차별 랭킹을 가져온다.", description = "202401과 같은 데이터를 제공하면 랭킹을 구할 수 있습니다.")
     @GetMapping("/ranking")
     public ApiResponse<List<StudyRankingResponse>> getStudyDurationRanking(Authentication authentication,
-                                                                           @RequestParam int year,
-                                                                           @RequestParam int month,
-                                                                           @RequestParam int day) {
+                                                                           @RequestParam int yearWeek) {
         Long userId = Long.parseLong(authentication.getName());
-        LocalDate today = LocalDate.of(year, month, day);
 
-        return ApiResponse.ok(studySessionService.getStudyDurationRanking(today));
+        return ApiResponse.ok(studySessionService.getStudyDurationRanking(yearWeek));
     }
 }

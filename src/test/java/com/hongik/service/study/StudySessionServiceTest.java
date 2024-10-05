@@ -162,6 +162,48 @@ class StudySessionServiceTest {
                 );
     }
 
+//    @DisplayName("원하는 날짜에 대한 랭킹을 조회한다. ex) 9월 2주차")
+//    @Test
+//    void getStudyDurationRanking() {
+//        // given
+//        User user1 = createUser("username1", "password", "nickname", "디자인학부");
+//        User user2 = createUser("username2", "password", "nickname", "건축학부");
+//        User user3 = createUser("username3", "password", "nickname", "컴퓨터공학");
+//        User user4 = createUser("username4", "password", "nickname", "조소과");
+//        userRepository.saveAll(List.of(user1, user2, user3, user4));
+//
+//        // 9월 16일 월요일 기준 16 ~ 22일 데이터가 출력된다.
+//        LocalDate today = LocalDate.of(2024, 9, 16);
+//
+//        LocalDateTime startTime1 = LocalDateTime.of(2024, 9, 19, 10, 10);
+//        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 10);
+//        LocalDateTime startTime2 = LocalDateTime.of(2024, 9, 19, 20, 10);
+//        LocalDateTime endTime2 = LocalDateTime.of(2024, 9, 19, 21, 10);
+//        LocalDateTime startTime3 = LocalDateTime.of(2024, 9, 20, 20, 10);
+//        LocalDateTime endTime3 = LocalDateTime.of(2024, 9, 20, 21, 10);
+//        StudySession studySession1 = createStudySession(user, startTime1, endTime1);
+//        StudySession studySession2 = createStudySession(user, startTime2, endTime2);
+//        StudySession studySession3 = createStudySession(user, startTime3, endTime3);
+//        studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
+//
+//        // when
+//        List<StudyCountResponse> result = studySessionService.getStudyCountOfWeek(today, user.getId());
+//
+//        // then
+//        assertThat(result).hasSize(7)
+//                .extracting("date", "studyCount")
+//                .containsExactly(
+//                        tuple(LocalDate.of(2024, 9, 16), 0L),
+//                        tuple(LocalDate.of(2024, 9, 17), 0L),
+//                        tuple(LocalDate.of(2024, 9, 18), 0L),
+//                        tuple(LocalDate.of(2024, 9, 19), 2L),
+//                        tuple(LocalDate.of(2024, 9, 20), 1L),
+//                        tuple(LocalDate.of(2024, 9, 21), 0L),
+//                        tuple(LocalDate.of(2024, 9, 22), 0L)
+//
+//                );
+//    }
+
     private User createUser(final String username, final String password, final String nickname, final String department) {
         return User.builder()
                 .username(username)
