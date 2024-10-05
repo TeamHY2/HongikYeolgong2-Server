@@ -17,7 +17,10 @@ public enum ErrorCode {
 
     // JWT
     INVALID_JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    INVALID_EXPIRATION_JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "기간이 만료된 토큰입니다.");
+    INVALID_EXPIRATION_JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "기간이 만료된 토큰입니다."),
+
+    // WeekField
+    ALREADY_EXIST_WEEK(HttpStatus.CONFLICT, "이미 존재하는 연도에 주차데이터입니다.");
 
     private final HttpStatus status;
 
