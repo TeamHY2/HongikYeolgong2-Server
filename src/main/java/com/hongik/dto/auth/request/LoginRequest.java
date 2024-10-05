@@ -1,22 +1,20 @@
 package com.hongik.dto.auth.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Data
 @Getter
 public class LoginRequest {
 
+    @Schema(example = "google, apple")
     private String socialPlatform;
 
-    private String name;
-
-    private String code;
+    private String id_token;
 
     @Builder
-    public LoginRequest(final String socialPlatform, final String name, final String code) {
+    public LoginRequest(final String socialPlatform, final String id_token) {
         this.socialPlatform = socialPlatform;
-        this.name = name;
-        this.code = code;
+        this.id_token = id_token;
     }
 }

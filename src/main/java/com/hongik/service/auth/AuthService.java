@@ -40,12 +40,14 @@ public class AuthService {
 
     public TokenResponse login(LoginRequest request) {
         User user = null;
+        boolean isAlreadyExist = false;
         String socialPlatform = request.getSocialPlatform();
         if (socialPlatform.equals("google")) {
             GoogleInfoResponse googleInfoResponse = googleLoginService.login(request);
 
             if (userRepository.findByUsername(googleInfoResponse.getEmail()).isPresent()) {
                 user = userRepository.findByUsername(googleInfoResponse.getEmail()).get();
+                isAlreadyExist = true;
             } else {
                 user = userRepository.save(User.builder()
                         .username(googleInfoResponse.getEmail())
@@ -58,6 +60,8 @@ public class AuthService {
 
             if (userRepository.findByUsername(email).isPresent()) {
                 user = userRepository.findByUsername(email).get();
+                isAlreadyExist = true;
+
             } else {
                 user = userRepository.save(User.builder()
                         .username(email)
@@ -66,6 +70,6 @@ public class AuthService {
             }
         }
 
-        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L));
+        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L), isAlreadyExist);
     }
 }
