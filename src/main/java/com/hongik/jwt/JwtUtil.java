@@ -74,6 +74,7 @@ public class JwtUtil {
     public String createAccessToken(User user, Long expiredMs) {
         return Jwts.builder()
                 .claim("id", user.getId())
+                .claim("role", user.getRole())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
