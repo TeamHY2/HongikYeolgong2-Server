@@ -7,6 +7,7 @@ import com.hongik.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,10 +32,8 @@ public class AuthController {
 
     @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, id_token을 넣어주세요.")
     @PostMapping("/login")
-    public ApiResponse<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
-        System.out.println("request = " + request.getId_token());
-        System.out.println("request.getSocialPlatform() = " + request.getSocialPlatform());
-        return ApiResponse.ok(authService.login(request));
+    public ResponseEntity<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴 기능입니다. 현재 HardDelete")

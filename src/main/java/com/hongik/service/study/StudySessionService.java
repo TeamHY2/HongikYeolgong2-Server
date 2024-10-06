@@ -118,18 +118,7 @@ public class StudySessionService {
                 .collect(toList());
     }
 
-    public List<StudyRankingResponse> getStudyDurationRanking(final LocalDate today) {
-        // 해당 연도에 year과 주차를 구한다.
-        int year = today.getYear();
-//        int week = today.get(WeekFields.of(Locale.FRANCE).weekOfYear());
-        WeekFields weekFields = WeekFields.ISO;
-        int week = today.get(weekFields.weekOfYear());
-        int yearWeek = year * 100 + week;
-        System.out.println("year = " + year);
-        System.out.println("today.getMonthValue() = " + today.getMonthValue());
-        System.out.println("today.getDayOfMonth() = " + today.getDayOfMonth());
-        System.out.println("yearWeek = " + yearWeek);
-
+    public List<StudyRankingResponse> getStudyDurationRanking(final int yearWeek) {
         // ex) 202440 데이터를 넣는다.
         List<Object[]> results = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek);
         // 202439 데이터를 넣는다. (이전 랭킹과 비교하기 위함)

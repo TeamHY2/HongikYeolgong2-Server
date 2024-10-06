@@ -2,7 +2,6 @@ package com.hongik.service.auth;
 
 import com.hongik.dto.auth.request.GoogleIdTokenRequest;
 import com.hongik.dto.auth.request.LoginRequest;
-import com.hongik.dto.auth.response.GoogleAuthResponse;
 import com.hongik.dto.auth.response.GoogleInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class GoogleLoginService {
 //        return null;
 //        return googleApiClient.googleInfo("Bearer " + googleAuthResponse.getAccess_token());
         return googleApiClient.googleInfo(GoogleIdTokenRequest.builder()
-                .id_token(request.getId_token())
+                .id_token(request.getIdToken())
                 .build());
     }
 }

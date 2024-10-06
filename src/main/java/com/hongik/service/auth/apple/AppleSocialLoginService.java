@@ -20,10 +20,10 @@ public class AppleSocialLoginService {
     private final AppleIdentityTokenValidator appleIdentityTokenValidator;
 
     public Claims login(LoginRequest socialLoginRequest) {
-        Map<String, String> headers = appleIdentityTokenParser.parseHeaders(socialLoginRequest.getId_token());
+        Map<String, String> headers = appleIdentityTokenParser.parseHeaders(socialLoginRequest.getIdToken());
         ApplePublicKeys applePublicKeys = appleFeignClient.getApplePublicKeys();
         PublicKey publicKey = applePublicKeyGenerator.generatePublicKeyWithApplePublicKeys(headers, applePublicKeys);
-        Claims claims = appleIdentityTokenParser.parseWithPublicKeyAndGetClaims(socialLoginRequest.getId_token(), publicKey);
+        Claims claims = appleIdentityTokenParser.parseWithPublicKeyAndGetClaims(socialLoginRequest.getIdToken(), publicKey);
         validateClaims(claims);
 
         return claims;

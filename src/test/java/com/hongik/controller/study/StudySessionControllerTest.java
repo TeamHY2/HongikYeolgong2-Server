@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
 import com.hongik.dto.study.response.StudyCountResponse;
 import com.hongik.dto.study.response.StudyDurationResponse;
+import com.hongik.dto.study.response.StudyRankingResponse;
 import com.hongik.service.study.StudySessionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -171,6 +172,29 @@ class StudySessionControllerTest {
         mockMvc.perform(
                         get("/api/v1/study/week").with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @DisplayName("yearWeek를 파라미터로 해당 주의 랭킹을 구합니다.")
+    @Test
+    void getStudyDurationRanking() throws Exception {
+        // given
+        final int yearWeek = 202404;
+        List<StudyRankingResponse> result = List.of();
+
+        BDDMockito.given(studySessionService.getStudyDurationRanking(yearWeek))
+                .willReturn(result);
+
+        // when // then
+        mockMvc.perform(
+                        get("/api/v1/study/ranking").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .param("yearWeek", String.valueOf(yearWeek))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())

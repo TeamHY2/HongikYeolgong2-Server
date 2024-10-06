@@ -33,7 +33,7 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.createStudy(request, userId));
     }
 
-    @Operation(summary = "연간, 월간, 투데이, 학기 공부 시간 조회", description = "서버 기준 현재 시간을 기준으로 날짜를 정합니다. <br> Minute을 제공합니다.")
+    @Operation(summary = "(기록 화면 캘린더 공부 횟수와 함께 표시) 연간, 월간, 투데이, 학기 공부 시간 조회", description = "서버 기준 현재 시간을 기준으로 날짜를 정합니다. <br> Minute을 제공합니다.")
     @GetMapping("/duration")
     public ApiResponse<StudyDurationResponse> getStudyDuration(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
@@ -50,7 +50,7 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.getStudyCount(year, month, userId));
     }
 
-    @Operation(summary = "모든 날짜 공부 횟수 조회", description = "모든 날짜에 대한 공부 횟수를 조회합니다.")
+    @Operation(summary = "(기록 화면 캘린더 공부 횟수) 모든 날짜 공부 횟수 조회", description = "모든 날짜에 대한 공부 횟수를 조회합니다.")
     @GetMapping("/count-all")
     public ApiResponse<List<StudyCountResponse>> getStudyCountAll(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
@@ -63,7 +63,7 @@ public class StudySessionController {
      * @param authentication
      * @return
      */
-    @Operation(summary = "현재 날짜 기준으로 주단위 월, 일, 공부 횟수를 가져옵니다.", description = "한 주에 대한 공부 횟수를 조회합니다.")
+    @Operation(summary = "(홈 화면 명언과 함께 나타낼 데이터) 서버의 현재 날짜 기준으로 주단위 월, 일, 공부 횟수를 가져옵니다.", description = "한 주에 대한 공부 횟수를 조회합니다.")
     @GetMapping("/week")
     public ApiResponse<List<StudyCountResponse>> getStudyCountOfWeek(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
@@ -72,15 +72,12 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.getStudyCountOfWeek(today, userId));
     }
 
-    @Operation(summary = "현재 날짜(연, 월, 일)기준으로 주차를 구하고 주차별 랭킹을 가져온다.", description = "2024-10-1과 같은 데이터를 제공하면 랭킹을 구할 수 있습니다.")
+    @Operation(summary = "(랭킹 화면) 주차별 랭킹을 가져온다.", description = "202401과 같은 데이터를 제공하면 랭킹을 구할 수 있습니다.")
     @GetMapping("/ranking")
     public ApiResponse<List<StudyRankingResponse>> getStudyDurationRanking(Authentication authentication,
-                                                                           @RequestParam int year,
-                                                                           @RequestParam int month,
-                                                                           @RequestParam int day) {
+                                                                           @RequestParam int yearWeek) {
         Long userId = Long.parseLong(authentication.getName());
-        LocalDate today = LocalDate.of(year, month, day);
 
-        return ApiResponse.ok(studySessionService.getStudyDurationRanking(today));
+        return ApiResponse.ok(studySessionService.getStudyDurationRanking(yearWeek));
     }
 }
