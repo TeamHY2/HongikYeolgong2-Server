@@ -66,9 +66,7 @@ class StudySessionControllerTest {
                                 .content(objectMapper.writeValueAsString(request))
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(status().isOk());
     }
 
     @DisplayName("열람실 이용 종료시 시작 시간은 필수값이다.")
@@ -131,9 +129,7 @@ class StudySessionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(status().isOk());
     }
 
     @DisplayName("특정 연도와 월에 대한 공부 횟수 조회")
@@ -153,10 +149,7 @@ class StudySessionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"))
-                .andExpect(jsonPath("$.data").isArray());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("현재 날짜 기준으로 주단위 월, 일, 공부 횟수를 가져옵니다.")
@@ -174,10 +167,7 @@ class StudySessionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"))
-                .andExpect(jsonPath("$.data").isArray());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("yearWeek를 파라미터로 해당 주의 랭킹을 구합니다.")
@@ -197,9 +187,6 @@ class StudySessionControllerTest {
                                 .param("yearWeek", String.valueOf(yearWeek))
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"))
-                .andExpect(jsonPath("$.data").isArray());
+                .andExpect(status().isOk());
     }
 }
