@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,8 @@ public class UserController {
     @Hidden
     @Operation(summary = "회원가입", description = "회원가입을 합니다.")
     @PostMapping("/sign-up")
-    public ApiResponse<UserResponse> singUp(@Valid @RequestBody UserCreateRequest request) {
-        return ApiResponse.ok(userService.signUp(request));
+    public ResponseEntity<UserResponse> singUp(@Valid @RequestBody UserCreateRequest request) {
+        return ResponseEntity.ok(userService.signUp(request));
     }
 
     @Operation(summary = "닉네임 중복검사", description = "닉네임 중복검사입니다.")
@@ -47,16 +48,16 @@ public class UserController {
 
     @Operation(summary = "닉네임과 학과를 입력하여 회원가입합니다.", description = "닉네임과 학과는 필수이며, 이 과정을 거쳐야 서비스를 이용할 수 있습니다. <br> ROLE.GUEST -> ROLE.USER로 등록합니다.")
     @PostMapping("/join")
-    public ApiResponse<UserResponse> join(@Valid @RequestBody UserJoinRequest request,
-                                          Authentication authentication) {
+    public ResponseEntity<UserResponse> join(@Valid @RequestBody UserJoinRequest request,
+                                             Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
-        return ApiResponse.ok(userService.join(request, userId));
+        return ResponseEntity.ok(userService.join(request, userId));
     }
 
     @Operation(summary = "본인 프로필 정보 조회", description = "닉네임과 학과를 반환합니다.")
     @GetMapping("/me")
-    public ApiResponse<UserResponse> getUserInfo(Authentication authentication) {
+    public ResponseEntity<UserResponse> getUserInfo(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
-        return ApiResponse.ok(userService.getUserInfo(userId));
+        return ResponseEntity.ok(userService.getUserInfo(userId));
     }
 }

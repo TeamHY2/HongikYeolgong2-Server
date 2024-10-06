@@ -65,9 +65,7 @@ class UserControllerTest {
                                 .content(objectMapper.writeValueAsString(request))
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(status().isOk());
     }
 
     @DisplayName("회원가입할 때 이메일은 필수값이다.")
@@ -307,9 +305,7 @@ class UserControllerTest {
                                 .content(objectMapper.writeValueAsString(request))
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(status().isOk());
     }
 
     @DisplayName("회원가입할 때 닉네임은 필수값이다.")
