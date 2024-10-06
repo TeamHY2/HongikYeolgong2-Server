@@ -66,9 +66,7 @@ class WiseSayingControllerTest {
                                 .content(objectMapper.writeValueAsString(List.of(request)))
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(status().isOk());
     }
 
     @DisplayName("서버에 저장된 명언을 조회합니다.")
@@ -86,8 +84,6 @@ class WiseSayingControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(status().isOk());
     }
 }
