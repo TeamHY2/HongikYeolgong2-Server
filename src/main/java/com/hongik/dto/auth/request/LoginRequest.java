@@ -10,11 +10,11 @@ public class LoginRequest {
     @Schema(example = "google, apple")
     private String socialPlatform;
 
-    private String id_token;
+    private String idToken;
 
     @Builder
-    public LoginRequest(final String socialPlatform, final String id_token) {
+    public LoginRequest(final String socialPlatform, final String idToken) {
         this.socialPlatform = socialPlatform;
-        this.id_token = id_token;
+        this.idToken = idToken;
     }
 }
