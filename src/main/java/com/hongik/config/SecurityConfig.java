@@ -1,8 +1,6 @@
 package com.hongik.config;
 
-import com.hongik.jwt.JwtFilter;
-import com.hongik.jwt.JwtUtil;
-import com.hongik.jwt.LoginFilter;
+import com.hongik.jwt.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +46,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/week-field").hasRole("ADMIN")
-                        .anyRequest().permitAll())
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new CustomJwtAuthenticationEntryPoint())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()))
+
                 .addFilterAfter(new JwtFilter(jwtUtil), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 // TODO: 핸들러 적용하여 Response 생성

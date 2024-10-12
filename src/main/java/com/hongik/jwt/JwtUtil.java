@@ -1,8 +1,13 @@
 package com.hongik.jwt;
 
 import com.hongik.domain.user.User;
+import com.hongik.exception.AppException;
+import com.hongik.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -62,14 +67,27 @@ public class JwtUtil {
     }
 
     public boolean isExpired(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getExpiration()
-                .before(new Date());
+        try {
+            // 토큰이 정상이면 return false
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration()
+                    .before(new Date());
+        } catch (ExpiredJwtException e) {
+            log.error(e.getMessage());
+            return true;
+        } catch (SignatureException e) {
+            log.error(e.getMessage());
+            return true;
+        } catch (MalformedJwtException e) {
+            log.error(e.getMessage());
+            return true;
+        }
     }
+
 
     public String createAccessToken(User user, Long expiredMs) {
         return Jwts.builder()

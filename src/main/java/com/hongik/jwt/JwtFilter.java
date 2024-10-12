@@ -1,5 +1,8 @@
 package com.hongik.jwt;
 
+import com.hongik.exception.AppException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,14 +28,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.error("token null");
+            log.error("토큰값이 null입니다.");
+            request.setAttribute("message", "토큰이 비어있습니다.(null)");
             filterChain.doFilter(request, response);
             return;
         }
 
         String accessToken = authHeader.split(" ")[1];
         if (jwtUtil.isExpired(accessToken)) {
-            log.error("token expired");
+            request.setAttribute("message", "토큰 유효기간이 만료되었습니다. 다시 로그인해주세요.");
+            response.setStatus(401);
             filterChain.doFilter(request, response);
             return;
         }
