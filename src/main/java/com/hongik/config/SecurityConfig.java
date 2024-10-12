@@ -55,7 +55,6 @@ public class SecurityConfig {
 
                 .addFilterAfter(new JwtFilter(jwtUtil), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                // TODO: 핸들러 적용하여 Response 생성
                 .build();
     }
 }
