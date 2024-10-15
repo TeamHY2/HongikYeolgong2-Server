@@ -24,17 +24,16 @@ public class AuthController {
 //        return authService.getGoogleLoginView();
 //    }
 
-//    @GetMapping("/login")
-//    public ApiResponse<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
-//        System.out.println("\"gdgdgd\" = " + "gdgdgd");
-//        return ApiResponse.ok(authService.login(request));
-//    }
-
     @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, id_token을 넣어주세요.")
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
-        return ResponseEntity.ok(authService.login(request));
+    public ApiResponse<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
+        return ApiResponse.ok(authService.login(request));
     }
+//    @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, id_token을 넣어주세요.")
+//    @PostMapping("/login")
+//    public ResponseEntity<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
+//        return ResponseEntity.ok(authService.login(request));
+//    }
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴 기능입니다. 현재 HardDelete")
     @DeleteMapping
