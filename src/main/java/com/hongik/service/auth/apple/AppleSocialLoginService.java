@@ -1,5 +1,6 @@
 package com.hongik.service.auth.apple;
 
+import com.hongik.dto.auth.request.AppleLoginRequest;
 import com.hongik.dto.auth.request.LoginRequest;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
@@ -19,7 +20,7 @@ public class AppleSocialLoginService {
     private final ApplePublicKeyGenerator applePublicKeyGenerator;
     private final AppleIdentityTokenValidator appleIdentityTokenValidator;
 
-    public Claims login(LoginRequest socialLoginRequest) {
+    public Claims login(AppleLoginRequest socialLoginRequest) {
         Map<String, String> headers = appleIdentityTokenParser.parseHeaders(socialLoginRequest.getIdToken());
         ApplePublicKeys applePublicKeys = appleFeignClient.getApplePublicKeys();
         PublicKey publicKey = applePublicKeyGenerator.generatePublicKeyWithApplePublicKeys(headers, applePublicKeys);
