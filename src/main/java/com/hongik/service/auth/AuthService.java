@@ -58,7 +58,7 @@ public class AuthService {
             }
         } else if (socialPlatform.equals("apple")) {
             Claims appleInfoResponse = appleSocialLoginService.login(request);
-            String email = appleInfoResponse.get("email", String.class);
+            String email = appleInfoResponse.get("sub", String.class);
 
             if (userRepository.findByUsername(email).isPresent()) {
                 user = userRepository.findByUsername(email).get();

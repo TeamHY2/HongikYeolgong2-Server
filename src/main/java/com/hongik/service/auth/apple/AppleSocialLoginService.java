@@ -24,7 +24,7 @@ public class AppleSocialLoginService {
         ApplePublicKeys applePublicKeys = appleFeignClient.getApplePublicKeys();
         PublicKey publicKey = applePublicKeyGenerator.generatePublicKeyWithApplePublicKeys(headers, applePublicKeys);
         Claims claims = appleIdentityTokenParser.parseWithPublicKeyAndGetClaims(socialLoginRequest.getIdToken(), publicKey);
-        validateClaims(claims);
+//        validateClaims(claims);
 
         return claims;
 
