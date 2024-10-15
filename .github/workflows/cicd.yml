@@ -39,7 +39,7 @@ jobs:
         run: |
           echo ${{ secrets.APPLICATION_SECRET }} | base64 --decode > ./src/main/resources/application-secret.yml
           echo ${{ secrets.APPLICATION_OAUTH }} | base64 --decode > ./src/main/resources/application-oauth.yml
-          echo ${{ secrets.FIREBASE_JSON }} | base64 --decode > ./src/main/resources/hongikyeolgong2.json
+          echo ${{ secrets.HONGIKYEOLGONG2 }} | base64 --decode > ./src/main/resources/hongikyeolgong2.json
           ./gradlew build
 
       - name: Login to DockerHub

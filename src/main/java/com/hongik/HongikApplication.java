@@ -14,10 +14,4 @@ public class HongikApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HongikApplication.class, args);
 	}
-
-	@PostConstruct
-	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-	}
-
 }
