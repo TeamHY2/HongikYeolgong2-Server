@@ -33,6 +33,8 @@ public class AuthController {
     @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, id_token을 넣어주세요.")
     @PostMapping("/login")
     public ApiResponse<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
+        System.out.println("request.getSocialPlatform() = " + request.getSocialPlatform());
+        System.out.println("request.getIdToken() = " + request.getIdToken());
         return ApiResponse.ok(authService.login(request));
     }
 //    @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, id_token을 넣어주세요.")
