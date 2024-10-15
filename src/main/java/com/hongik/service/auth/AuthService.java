@@ -3,6 +3,7 @@ package com.hongik.service.auth;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
+import com.hongik.dto.auth.request.AppleLoginRequest;
 import com.hongik.dto.auth.request.LoginRequest;
 import com.hongik.dto.auth.response.GoogleInfoResponse;
 import com.hongik.dto.auth.response.TokenResponse;
@@ -11,6 +12,7 @@ import com.hongik.exception.ErrorCode;
 import com.hongik.jwt.JwtUtil;
 import com.hongik.service.auth.apple.AppleSocialLoginService;
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class AuthService {
                 + "&access_type=offline";
     }
 
+    @Transactional
     public TokenResponse login(LoginRequest request) {
         User user = null;
         boolean isAlreadyExist = false;
@@ -48,28 +51,45 @@ public class AuthService {
             GoogleInfoResponse googleInfoResponse = googleLoginService.login(request);
 
             if (userRepository.findByUsername(googleInfoResponse.getEmail()).isPresent()) {
+                // 이메일이 존재할 때 마이그레이션으로 인하여 sub값도 갱신해야 된다.
                 user = userRepository.findByUsername(googleInfoResponse.getEmail()).get();
+                user.updateSub(googleInfoResponse.getSub());
                 isAlreadyExist = true;
             } else {
                 user = userRepository.save(User.builder()
                         .username(googleInfoResponse.getEmail())
+                        .sub(googleInfoResponse.getSub())
                         .role(Role.GUEST)
                         .build());
             }
-        } else if (socialPlatform.equals("apple")) {
-            Claims appleInfoResponse = appleSocialLoginService.login(request);
-            String email = appleInfoResponse.get("sub", String.class);
+        }
 
-            if (userRepository.findByUsername(email).isPresent()) {
-                user = userRepository.findByUsername(email).get();
-                isAlreadyExist = true;
+        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L), isAlreadyExist);
+    }
 
-            } else {
-                user = userRepository.save(User.builder()
-                        .username(email)
-                        .role(Role.GUEST)
-                        .build());
-            }
+    @Transactional
+    public TokenResponse appleLogin(AppleLoginRequest request) {
+        User user = null;
+        boolean isAlreadyExist = false;
+
+        // 토큰이 정상적인지 확인한다. sub값 추출
+        Claims appleInfoResponse = appleSocialLoginService.login(request);
+        String sub = appleInfoResponse.get("sub", String.class);
+        String email = request.getEmail();
+
+        // email로 회원을 찾고, 존재하면 sub값 갱신하여 로그인한다.
+        if (userRepository.findByUsername(email).isPresent()) {
+            user = userRepository.findByUsername(email).get();
+            user.updateSub(sub);
+            isAlreadyExist = true;
+
+        } else {
+            // 존재하지 않으면 새로운 회원을 만든다.
+            user = userRepository.save(User.builder()
+                    .username(email)
+                    .sub(sub)
+                    .role(Role.GUEST)
+                    .build());
         }
 
         return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L), isAlreadyExist);
