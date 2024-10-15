@@ -3,7 +3,7 @@ package com.hongik.dto.auth.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 public class LoginRequest {
 
