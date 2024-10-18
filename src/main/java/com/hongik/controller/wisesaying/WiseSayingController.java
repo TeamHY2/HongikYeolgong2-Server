@@ -23,14 +23,14 @@ public class WiseSayingController {
 
     @Operation(summary = "명언들 저장", description = "명언을 여러개 한번에 저장합니다. JSON 형식입니다.")
     @PostMapping
-    public ResponseEntity<List<WiseSayingResponse>> createWiseSaying(@RequestBody List<WiseSayingCreateRequest> request) {
-        return ResponseEntity.ok(wiseSayingService.createWiseSaying(request));
+    public ApiResponse<List<WiseSayingResponse>> createWiseSaying(@RequestBody List<WiseSayingCreateRequest> request) {
+        return ApiResponse.ok(wiseSayingService.createWiseSaying(request));
     }
 
     @Operation(summary = "명언 조회", description = "명언을 하나씩 조회합니다. 순서는 서버에서 관리합니다.")
     @GetMapping
-    public ResponseEntity<WiseSayingResponse> getWiseSaying() {
+    public ApiResponse<WiseSayingResponse> getWiseSaying() {
         LocalDate now = LocalDate.now();
-        return ResponseEntity.ok(wiseSayingService.getWiseSaying(now));
+        return ApiResponse.ok(wiseSayingService.getWiseSaying(now));
     }
 }
