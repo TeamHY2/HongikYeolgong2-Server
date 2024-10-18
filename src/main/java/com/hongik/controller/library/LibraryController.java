@@ -1,5 +1,6 @@
 package com.hongik.controller.library;
 
+import com.hongik.dto.ApiResponse;
 import com.hongik.dto.library.response.LibraryResponse;
 import com.hongik.service.library.LibraryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,18 +21,18 @@ public class LibraryController {
 
     @Operation(summary = "열람실 좌석 이용 가능한 시간 조회(4시간 or 6시간)", description = "열람실 좌석 이용 가능한 시간을 조회합니다. 일반 6시간, 시험기간 4시간")
     @GetMapping
-    public ResponseEntity<LibraryResponse> getLibraryHours(Authentication authentication) {
+    public ApiResponse<LibraryResponse> getLibraryHours(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
-        return ResponseEntity.ok(libraryService.getLibraryHours());
+        return ApiResponse.ok(libraryService.getLibraryHours());
     }
 
     @Operation(summary = "열람실 좌석 이용 가능한 시간 수정(4시간 or 6시간)", description = "열람실 좌석 좌석 이용 가능한 시간을 수정합니다. 일반 6시간, 시험기간 4시간")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
-    public ResponseEntity<LibraryResponse> updateLibraryHours(Authentication authentication,
+    public ApiResponse<LibraryResponse> updateLibraryHours(Authentication authentication,
                                                               @RequestParam int libraryHours) {
         Long userId = Long.parseLong(authentication.getName());
-        return ResponseEntity.ok(libraryService.updateLibraryHours(libraryHours));
+        return ApiResponse.ok(libraryService.updateLibraryHours(libraryHours));
     }
 
 }
