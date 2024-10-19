@@ -7,6 +7,7 @@ import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.request.UserJoinRequest;
 import com.hongik.dto.user.request.UsernameRequest;
+import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
 import org.junit.jupiter.api.AfterEach;
@@ -87,7 +88,7 @@ class UserServiceTest {
         userRepository.save(user);
 
         UserCreateRequest request = UserCreateRequest.builder()
-                .username("test@email.com")
+                .username("test2@email.com")
                 .password("password")
                 .nickname(nickname)
                 .department("department")
@@ -99,7 +100,7 @@ class UserServiceTest {
                 .hasMessage("이미 존재하는 닉네임입니다.");
     }
 
-    @DisplayName("닉네임 중복검사를 할 때 이미 닉네임이 존재하면 예외가 발생한다.")
+    @DisplayName("닉네임 중복검사를 할 때 이미 닉네임이 존재하면 true를 반환한다.")
     @Test
     void checkNicknameDuplication() {
         // given
@@ -111,10 +112,13 @@ class UserServiceTest {
                 .nickname(nickname)
                 .build();
 
-        // when // then
-        assertThatThrownBy(() -> userService.checkNicknameDuplication(request.getNickname()))
-                .isInstanceOf(AppException.class)
-                .hasMessage("이미 존재하는 닉네임입니다.");
+        // when
+        NicknameResponse nicknameResponse = userService.checkNicknameDuplication(request.getNickname());
+
+        // then
+        assertThat(nicknameResponse)
+                .extracting("nickname", "isDuplicate")
+                .containsExactlyInAnyOrder(nickname, true);
     }
 
     @DisplayName("회원가입을 진행할 때 중복된 이메일이 존재하면 예외가 발생한다.")

@@ -5,6 +5,7 @@ import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.request.UserJoinRequest;
 import com.hongik.dto.user.request.UsernameRequest;
+import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.service.user.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -35,8 +36,8 @@ public class UserController {
 
     @Operation(summary = "닉네임 중복검사", description = "닉네임 중복검사입니다.")
     @GetMapping("/duplicate-nickname")
-    public void duplicateNickname(@Valid @RequestBody NicknameRequest request) {
-        userService.checkNicknameDuplication(request.getNickname());
+    public ApiResponse<NicknameResponse> duplicateNickname(@Valid @RequestBody NicknameRequest request) {
+        return ApiResponse.ok(userService.checkNicknameDuplication(request.getNickname()));
     }
 
     @Hidden
