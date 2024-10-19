@@ -4,6 +4,7 @@ import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.request.UserJoinRequest;
+import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
@@ -22,17 +23,21 @@ public class UserService {
 
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
-        checkNicknameDuplication(request.getNickname());
+        if (checkNicknameDuplication(request.getNickname()).isDuplicate()) {
+            throw new AppException(ErrorCode.ALREADY_EXIST_NICKNAME, ErrorCode.ALREADY_EXIST_NICKNAME.getMessage());
+        }
         checkUsernameDuplication(request.getUsername());
 
         User savedUser = userRepository.save(request.toEntity(bCryptPasswordEncoder.encode(request.getPassword())));
         return UserResponse.of(savedUser);
     }
 
-    public void checkNicknameDuplication(final String nickname) {
+    public NicknameResponse checkNicknameDuplication(final String nickname) {
         if (userRepository.findByNickname(nickname).isPresent()) {
-            throw new AppException(ErrorCode.ALREADY_EXIST_NICKNAME, ErrorCode.ALREADY_EXIST_NICKNAME.getMessage());
+            return NicknameResponse.of(nickname, true);
         }
+
+        return NicknameResponse.of(nickname, false);
     }
 
     public void checkUsernameDuplication(final String username) {
@@ -49,7 +54,9 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
-        checkNicknameDuplication(request.getNickname());
+        if (checkNicknameDuplication(request.getNickname()).isDuplicate()) {
+            throw new AppException(ErrorCode.ALREADY_EXIST_NICKNAME, ErrorCode.ALREADY_EXIST_NICKNAME.getMessage());
+        }
 
         user.join(request.getNickname(), request.getDepartment());
         return UserResponse.of(user);
