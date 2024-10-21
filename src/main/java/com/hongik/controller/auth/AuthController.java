@@ -7,6 +7,7 @@ import com.hongik.dto.auth.response.TokenResponse;
 import com.hongik.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,9 +26,9 @@ public class AuthController {
 //        return authService.getGoogleLoginView();
 //    }
 
-    @Operation(summary = "구글 소셜 로그인", description = "구글, idToken을 넣어주세요.")
-    @PostMapping("/login")
-    public ApiResponse<TokenResponse> selectGoogleLoginInfo(@RequestBody LoginRequest request){
+    @Operation(summary = "구글 소셜 로그인", description = "idToken을 넣어주세요.")
+    @PostMapping("/login-google")
+    public ApiResponse<TokenResponse> selectGoogleLoginInfo(@Valid @RequestBody LoginRequest request){
         return ApiResponse.ok(authService.login(request));
     }
 //    @Operation(summary = "구글, 애플 소셜 로그인", description = "구글과 애플, id_token을 넣어주세요.")
