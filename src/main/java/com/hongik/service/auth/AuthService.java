@@ -46,22 +46,21 @@ public class AuthService {
     public TokenResponse login(LoginRequest request) {
         User user = null;
         boolean isAlreadyExist = false;
-        String socialPlatform = request.getSocialPlatform();
-        if (socialPlatform.equals("google")) {
-            GoogleInfoResponse googleInfoResponse = googleLoginService.login(request);
+        GoogleInfoResponse googleInfoResponse = googleLoginService.login(request);
 
-            if (userRepository.findByUsername(googleInfoResponse.getEmail()).isPresent()) {
-                // 이메일이 존재할 때 마이그레이션으로 인하여 sub값도 갱신해야 된다.
-                user = userRepository.findByUsername(googleInfoResponse.getEmail()).get();
-                user.updateSub(googleInfoResponse.getSub());
+        if (userRepository.findByUsername(googleInfoResponse.getEmail()).isPresent()) {
+            // 이메일이 존재할 때 마이그레이션으로 인하여 sub값도 갱신해야 된다.
+            user = userRepository.findByUsername(googleInfoResponse.getEmail()).get();
+            user.updateSub(googleInfoResponse.getSub());
+            if (user.getRole().equals(Role.USER)) {
                 isAlreadyExist = true;
-            } else {
-                user = userRepository.save(User.builder()
-                        .username(googleInfoResponse.getEmail())
-                        .sub(googleInfoResponse.getSub())
-                        .role(Role.GUEST)
-                        .build());
             }
+        } else {
+            user = userRepository.save(User.builder()
+                    .username(googleInfoResponse.getEmail())
+                    .sub(googleInfoResponse.getSub())
+                    .role(Role.GUEST)
+                    .build());
         }
 
         return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L), isAlreadyExist);
@@ -81,8 +80,9 @@ public class AuthService {
         if (userRepository.findByUsername(email).isPresent()) {
             user = userRepository.findByUsername(email).get();
             user.updateSub(sub);
-            isAlreadyExist = true;
-
+            if (user.getRole().equals(Role.USER)) {
+                isAlreadyExist = true;
+            }
         } else {
             // 존재하지 않으면 새로운 회원을 만든다.
             user = userRepository.save(User.builder()
