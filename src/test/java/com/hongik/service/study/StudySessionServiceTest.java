@@ -72,12 +72,18 @@ class StudySessionServiceTest {
         User user = createUser("username", "password", "nickname", "디자인학부");
         userRepository.save(user);
 
+        /*
+        2024년 - 3시간 3분
+        2024년 9월 - 3시간 3분
+        2024년 9월 19일 - 2시간 2분, 2024년 9월 20일 - 1시간 1분
+        학기(second) - 3시간 3분
+         */
         LocalDateTime startTime1 = LocalDateTime.of(2024, 9, 19, 10, 10);
-        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 10);
+        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 11);
         LocalDateTime startTime2 = LocalDateTime.of(2024, 9, 19, 20, 10);
-        LocalDateTime endTime2 = LocalDateTime.of(2024, 9, 19, 21, 10);
+        LocalDateTime endTime2 = LocalDateTime.of(2024, 9, 19, 21, 11);
         LocalDateTime startTime3 = LocalDateTime.of(2024, 9, 20, 20, 10);
-        LocalDateTime endTime3 = LocalDateTime.of(2024, 9, 20, 21, 10);
+        LocalDateTime endTime3 = LocalDateTime.of(2024, 9, 20, 21, 11);
         StudySession studySession1 = createStudySession(user, startTime1, endTime1);
         StudySession studySession2 = createStudySession(user, startTime2, endTime2);
         StudySession studySession3 = createStudySession(user, startTime3, endTime3);
@@ -89,8 +95,25 @@ class StudySessionServiceTest {
         // then
         assertThat(studyDurationResponse).isNotNull();
         assertThat(studyDurationResponse)
-                .extracting("studyDurationWithYear", "studyDurationWithMonth", "studyDurationWithDay", "studyDurationWithSemester")
-                .containsExactly(180L, 180L, 60L, 180L);
+                .extracting("yearHours", "yearMinutes")
+                .containsExactly(
+                        3L, 3L
+                );
+        assertThat(studyDurationResponse)
+                .extracting("monthHours", "monthMinutes")
+                .containsExactly(
+                        3L, 3L
+                );
+        assertThat(studyDurationResponse)
+                .extracting("dayHours", "dayMinutes")
+                .containsExactly(
+                        1L, 1L
+                );
+        assertThat(studyDurationResponse)
+                .extracting("semesterHours", "semesterMinutes")
+                .containsExactly(
+                        3L, 3L
+                );
     }
 
     @DisplayName("유저의 특정 날짜(Month, Day)에 대한 공부 횟수 조회")

@@ -12,13 +12,13 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
     /**
      * 2024년 10월 1일에 대한 공부 시간을 조회한다.
      */
-    @Query(value = "SELECT IFNULL(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) " +
+    @Query(value = "SELECT IFNULL(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) " +
             "FROM study_session s " +
             "WHERE s.user_id = :userId " +
             "AND YEAR(s.start_time) = :year " +
             "AND MONTH(s.start_time) = :month " +
             "AND DAY(s.start_time) = :day", nativeQuery = true)
-    Long getStudyDurationForDay(@Param("userId") Long userId,
+    Long getStudyDurationForDayAsSeconds(@Param("userId") Long userId,
                                 @Param("year") int year,
                                 @Param("month") int month,
                                 @Param("day") int day);
@@ -36,23 +36,23 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
     /**
      * 2024년 10월에 대한 공부 시간을 조회한다.
      */
-    @Query(value = "SELECT IFNULL(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0)" +
+    @Query(value = "SELECT IFNULL(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0)" +
             "FROM study_session s " +
             "WHERE s.user_id = :userId " +
             "AND YEAR(s.start_time) = :year " +
             "AND MONTH(s.start_time) = :month", nativeQuery = true)
-    Long getStudyDurationForMonth(@Param("userId") Long userId,
+    Long getStudyDurationForMonthAsSeconds(@Param("userId") Long userId,
                                   @Param("year") int year,
                                   @Param("month") int month);
 
     /**
      * 2024년에 대한 공부 시간을 조회한다.
      */
-    @Query(value = "SELECT IFNULL(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0)" +
+    @Query(value = "SELECT IFNULL(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0)" +
             "FROM study_session s " +
             "WHERE s.user_id = :userId " +
             "AND YEAR(s.start_time) = :year", nativeQuery = true)
-    Long getStudyDurationForYear(@Param("userId") Long userId,
+    Long getStudyDurationForYearAsSeconds(@Param("userId") Long userId,
                                  @Param("year") int year);
 
     /**
@@ -60,14 +60,14 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
      */
     @Query(value = "SELECT " +
             "CASE " +
-            "WHEN :semester = 'winter' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (1, 2) THEN TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time) ELSE 0 END) " +
-            "WHEN :semester = 'first' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (3, 4, 5, 6) THEN TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time) ELSE 0 END) " +
-            "WHEN :semester = 'summer' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (7, 8) THEN TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time) ELSE 0 END)" +
-            "WHEN :semester = 'second' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (9, 10, 11, 12) THEN TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time) ELSE 0 END) " +
+            "WHEN :semester = 'winter' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (1, 2) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END) " +
+            "WHEN :semester = 'first' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (3, 4, 5, 6) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END) " +
+            "WHEN :semester = 'summer' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (7, 8) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END)" +
+            "WHEN :semester = 'second' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (9, 10, 11, 12) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END) " +
             "ELSE 0 END AS semesterStudyTime " +
             "FROM study_session s " +
             "WHERE s.user_id = :userId", nativeQuery = true)
-    Long getStudyDurationForSemester(@Param("userId") Long userId,
+    Long getStudyDurationForSemesterAsSeconds(@Param("userId") Long userId,
                                      @Param("year") int year,
                                      @Param("semester") String semester);
 
@@ -117,11 +117,12 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 
     // test
     @Query(value = "SELECT u.department, " +
-            "COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) AS minute, " +
-            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) DESC) as ranking " +
+            "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS minute, " +
+            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) as ranking " +
             "FROM users u " +
             "LEFT JOIN study_session s ON u.id = s.user_id " +
             "AND YEARWEEK(s.start_time, 1) = :weekYear " +
+            "WHERE u.department IS NOT NULL " +
             "GROUP BY u.department " +
             "ORDER BY minute DESC", nativeQuery = true)
     List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);

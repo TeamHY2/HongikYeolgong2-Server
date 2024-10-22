@@ -27,9 +27,9 @@ class StudySessionRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @DisplayName("유저의 특정 날짜(Day)에 대한 공부 시간 조회")
+    @DisplayName("유저의 특정 연도(Year)에 대한 공부 시간 조회 (결과 SECOND)")
     @Test
-    void getStudyDurationForDay() {
+    void getStudyDurationForYearAsSeconds() {
         // given
         User user = createUser("username", "password", "nickname", "디자인학부");
         userRepository.save(user);
@@ -43,15 +43,15 @@ class StudySessionRepositoryTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2));
 
         // when
-        Long studyDurationForDay = studySessionRepository.getStudyDurationForDay(user.getId(), 2024, 9, 19);
+        Long studyDurationForDay = studySessionRepository.getStudyDurationForYearAsSeconds(user.getId(), 2024);
 
         // then
-        assertThat(studyDurationForDay).isEqualTo(120L);
+        assertThat(studyDurationForDay).isEqualTo(7200L);
     }
 
-    @DisplayName("유저의 특정 날짜(Month)에 대한 공부 시간 조회")
+    @DisplayName("유저의 특정 날짜(Month)에 대한 공부 시간 조회 (결과 SECOND)")
     @Test
-    void getStudyDurationForMonth() {
+    void getStudyDurationForMonthAsSeconds() {
         // given
         User user = createUser("username", "password", "nickname", "디자인학부");
         userRepository.save(user);
@@ -65,10 +65,55 @@ class StudySessionRepositoryTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2));
 
         // when
-        Long studyDurationForDay = studySessionRepository.getStudyDurationForMonth(user.getId(), 2024, 9);
+        Long studyDurationForDay = studySessionRepository.getStudyDurationForMonthAsSeconds(user.getId(), 2024, 9);
 
         // then
-        assertThat(studyDurationForDay).isEqualTo(120L);
+        assertThat(studyDurationForDay).isEqualTo(7200L);
+    }
+
+    @DisplayName("유저의 특정 날짜(Day)에 대한 공부 시간 조회 (결과 SECOND)")
+    @Test
+    void getStudyDurationForDayAsSeconds() {
+        // given
+        User user = createUser("username", "password", "nickname", "디자인학부");
+        userRepository.save(user);
+
+        LocalDateTime startTime1 = LocalDateTime.of(2024, 9, 19, 10, 10);
+        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 10);
+        LocalDateTime startTime2 = LocalDateTime.of(2024, 9, 19, 20, 10);
+        LocalDateTime endTime2 = LocalDateTime.of(2024, 9, 19, 21, 10);
+        StudySession studySession1 = createStudySession(user, startTime1, endTime1);
+        StudySession studySession2 = createStudySession(user, startTime2, endTime2);
+        studySessionRepository.saveAll(List.of(studySession1, studySession2));
+
+        // when
+        Long studyDurationForDay = studySessionRepository.getStudyDurationForDayAsSeconds(user.getId(), 2024, 9, 19);
+
+        // then
+        assertThat(studyDurationForDay).isEqualTo(7200L);
+    }
+
+    @DisplayName("유저의 특정 학기(Semester)에 대한 공부 시간 조회 (결과 SECOND)")
+    @Test
+    void getStudyDurationForSemesterAsSeconds() {
+        // given
+        User user = createUser("username", "password", "nickname", "디자인학부");
+        userRepository.save(user);
+
+        // 9월의 Semester 값은 second
+        LocalDateTime startTime1 = LocalDateTime.of(2024, 9, 19, 10, 10);
+        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 10);
+        LocalDateTime startTime2 = LocalDateTime.of(2024, 9, 19, 20, 10);
+        LocalDateTime endTime2 = LocalDateTime.of(2024, 9, 19, 21, 10);
+        StudySession studySession1 = createStudySession(user, startTime1, endTime1);
+        StudySession studySession2 = createStudySession(user, startTime2, endTime2);
+        studySessionRepository.saveAll(List.of(studySession1, studySession2));
+
+        // when
+        Long studyDurationForSemester = studySessionRepository.getStudyDurationForSemesterAsSeconds(user.getId(), 2024, "second");
+
+        // then
+        assertThat(studyDurationForSemester).isEqualTo(7200L);
     }
 
     @DisplayName("유저의 특정 날짜(Year, Month)에 대한 공부 횟수 조회")

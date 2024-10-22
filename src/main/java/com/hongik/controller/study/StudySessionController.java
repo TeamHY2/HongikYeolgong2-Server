@@ -5,6 +5,7 @@ import com.hongik.dto.study.request.StudySessionCreateRequest;
 import com.hongik.dto.study.response.*;
 import com.hongik.service.study.StudySessionService;
 import com.hongik.swagger.ApiErrorCodeExamples;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -47,6 +48,7 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.getStudyDuration(now, userId));
     }
 
+    @Hidden
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "특정 날짜 공부 횟수 조회", description = "해당 년, 월에 대한 데이터를 넣어주세요.")
     @GetMapping("/count")

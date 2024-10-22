@@ -49,12 +49,23 @@ public class StudySessionService {
 
         String currentSemester = getCurrentSemester(month);
 
-        Long studyDurationWithYear = studySessionRepository.getStudyDurationForYear(userId, year);
-        Long studyDurationWithMonth = studySessionRepository.getStudyDurationForMonth(userId, year, month);
-        Long studyDurationWithDay = studySessionRepository.getStudyDurationForDay(userId, year, month, day);
-        Long studyDurationWithSemester = studySessionRepository.getStudyDurationForSemester(userId, year, currentSemester);
+        Long studyDurationWithYear = studySessionRepository.getStudyDurationForYearAsSeconds(userId, year);
+        Long yearHours = studyDurationWithYear / 3600;
+        Long yearMinutes = studyDurationWithYear % 3600 / 60;
 
-        return StudyDurationResponse.of(studyDurationWithYear, studyDurationWithMonth, studyDurationWithDay, studyDurationWithSemester);
+        Long studyDurationWithMonth = studySessionRepository.getStudyDurationForMonthAsSeconds(userId, year, month);
+        Long monthHours = studyDurationWithMonth / 3600;
+        Long monthMinutes = studyDurationWithMonth % 3600 / 60;
+
+        Long studyDurationWithDay = studySessionRepository.getStudyDurationForDayAsSeconds(userId, year, month, day);
+        Long dayHours = studyDurationWithDay / 3600;
+        Long dayMinutes = studyDurationWithDay % 3600 / 60;
+
+        Long studyDurationWithSemester = studySessionRepository.getStudyDurationForSemesterAsSeconds(userId, year, currentSemester);
+        Long semesterHours = studyDurationWithSemester / 3600;
+        Long semesterMinutes = studyDurationWithSemester % 3600 / 60;
+
+        return StudyDurationResponse.of(yearHours, yearMinutes, monthHours, monthMinutes, dayHours, dayMinutes, semesterHours, semesterMinutes);
     }
 
     public List<StudyCountResponse> getStudyCount(final int year, final int month, final Long userId) {
@@ -136,7 +147,7 @@ public class StudySessionService {
             response.add(
                     StudyRankingResponse.of(
                             (String) result[0],
-                            ((Number) result[1]).longValue(),
+                            ((Number) result[1]).longValue() / 3600,
                             ((Number) result[2]).intValue(),
                             previousResult.get((String) result[0])
                     )
