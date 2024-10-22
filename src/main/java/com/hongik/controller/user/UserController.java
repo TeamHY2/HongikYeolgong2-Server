@@ -8,6 +8,7 @@ import com.hongik.dto.user.request.UsernameRequest;
 import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.service.user.UserService;
+import com.hongik.swagger.ApiErrorCodeExamples;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import static com.hongik.exception.ErrorCode.*;
+import static com.hongik.exception.ErrorCode.NOT_FOUND_USER;
 
 @Tag(name = "User Controller - 유저 컨트롤러", description = "회원가입, 닉네임 중복검사를 진행합니다.")
 @Slf4j
@@ -34,6 +38,7 @@ public class UserController {
         return ApiResponse.ok(userService.signUp(request));
     }
 
+    @ApiErrorCodeExamples({INVALID_INPUT_VALUE})
     @Operation(summary = "닉네임 중복검사", description = "닉네임 중복검사입니다.")
     @GetMapping("/duplicate-nickname")
     public ApiResponse<NicknameResponse> duplicateNickname(@Valid @RequestBody NicknameRequest request) {
@@ -47,6 +52,7 @@ public class UserController {
         userService.checkUsernameDuplication(request.getUsername());
     }
 
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, NOT_FOUND_USER, ALREADY_EXIST_NICKNAME})
     @Operation(summary = "닉네임과 학과를 입력하여 회원가입합니다.", description = "닉네임과 학과는 필수이며, 이 과정을 거쳐야 서비스를 이용할 수 있습니다. <br> ROLE.GUEST -> ROLE.USER로 등록합니다.")
     @PostMapping("/join")
     public ApiResponse<UserResponse> join(@Valid @RequestBody UserJoinRequest request,
@@ -55,6 +61,7 @@ public class UserController {
         return ApiResponse.ok(userService.join(request, userId));
     }
 
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "본인 프로필 정보 조회", description = "닉네임과 학과를 반환합니다.")
     @GetMapping("/me")
     public ApiResponse<UserResponse> getUserInfo(Authentication authentication) {

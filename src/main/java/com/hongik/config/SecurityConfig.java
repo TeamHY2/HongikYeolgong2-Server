@@ -48,7 +48,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/week-field").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/env").permitAll()
                         .requestMatchers("/api/v1/user/join", "/api/v1/user/duplicate-nickname", "/api/v1/auth/login-google", "/api/v1/auth/login-apple").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().hasAnyRole("USER", "ADMIN"))
+//                        .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomJwtAuthenticationEntryPoint())
                         .accessDeniedHandler(new CustomAccessDeniedHandler()))

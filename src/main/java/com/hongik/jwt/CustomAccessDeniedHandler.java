@@ -6,6 +6,7 @@ import com.hongik.exception.TokenErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -22,12 +23,17 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     }
 
     private void setResponse(HttpServletResponse response) throws IOException {
-        TokenErrorResponse tokenErrorResponse = TokenErrorResponse.of("권한이 없습니다.");
-
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
+
+        TokenErrorResponse tokenErrorResponse = TokenErrorResponse.of(
+                response.getStatus(),
+                HttpStatus.FORBIDDEN.name(),
+                "권한이 없습니다."
+        );
+
         response.getWriter()
                 .write(objectMapper.writeValueAsString(tokenErrorResponse));
     }
