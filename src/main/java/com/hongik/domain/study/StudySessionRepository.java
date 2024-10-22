@@ -117,11 +117,12 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 
     // test
     @Query(value = "SELECT u.department, " +
-            "COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) AS minute, " +
-            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) DESC) as ranking " +
+            "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS minute, " +
+            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) as ranking " +
             "FROM users u " +
             "LEFT JOIN study_session s ON u.id = s.user_id " +
             "AND YEARWEEK(s.start_time, 1) = :weekYear " +
+            "WHERE u.department IS NOT NULL " +
             "GROUP BY u.department " +
             "ORDER BY minute DESC", nativeQuery = true)
     List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);

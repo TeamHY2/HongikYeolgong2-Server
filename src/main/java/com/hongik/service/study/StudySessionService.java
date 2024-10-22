@@ -147,7 +147,7 @@ public class StudySessionService {
             response.add(
                     StudyRankingResponse.of(
                             (String) result[0],
-                            ((Number) result[1]).longValue(),
+                            ((Number) result[1]).longValue() / 3600,
                             ((Number) result[2]).intValue(),
                             previousResult.get((String) result[0])
                     )
