@@ -10,32 +10,44 @@ import lombok.NoArgsConstructor;
 @Getter
 public class StudyDurationResponse {
 
-    @Schema(example = "120")
-    private Long studyDurationWithYear;
+    private Long yearHours;
 
-    @Schema(example = "20")
-    private Long studyDurationWithMonth;
+    private Long yearMinutes;
 
-    @Schema(example = "10")
-    private Long studyDurationWithDay;
+    private Long monthHours;
 
-    @Schema(example = "50")
-    private Long studyDurationWithSemester;
+    private Long monthMinutes;
+
+    private Long dayHours;
+
+    private Long dayMinutes;
+
+    private Long semesterHours;
+
+    private Long semesterMinutes;
 
     @Builder
-    public StudyDurationResponse(final Long studyDurationWithYear, final Long studyDurationWithMonth, final Long studyDurationWithDay, final Long studyDurationWithSemester) {
-        this.studyDurationWithYear = studyDurationWithYear;
-        this.studyDurationWithMonth = studyDurationWithMonth;
-        this.studyDurationWithDay = studyDurationWithDay;
-        this.studyDurationWithSemester = studyDurationWithSemester;
+    public StudyDurationResponse(final Long yearHours, final Long yearMinutes, final Long monthHours, final Long monthMinutes, final Long dayHours, final Long dayMinutes, final Long semesterHours, final Long semesterMinutes) {
+        this.yearHours = yearHours;
+        this.yearMinutes = yearMinutes;
+        this.monthHours = monthHours;
+        this.monthMinutes = monthMinutes;
+        this.dayHours = dayHours;
+        this.dayMinutes = dayMinutes;
+        this.semesterHours = semesterHours;
+        this.semesterMinutes = semesterMinutes;
     }
 
-    public static StudyDurationResponse of(final Long studyDurationWithYear, final Long studyDurationWithMonth, final Long studyDurationWithDay, final Long studyDurationWithSemester) {
+    public static StudyDurationResponse of(final Long yearHours, final Long yearMinutes, final Long monthHours, final Long monthMinutes, final Long dayHours, final Long dayMinutes, final Long semesterHours, final Long semesterMinutes) {
         return StudyDurationResponse.builder()
-                .studyDurationWithYear(studyDurationWithYear)
-                .studyDurationWithMonth(studyDurationWithMonth)
-                .studyDurationWithDay(studyDurationWithDay)
-                .studyDurationWithSemester(studyDurationWithSemester)
+                .yearHours(yearHours)
+                .yearMinutes(yearMinutes)
+                .monthHours(monthHours)
+                .monthMinutes(monthMinutes)
+                .dayHours(dayHours)
+                .dayMinutes(dayMinutes)
+                .semesterHours(semesterHours)
+                .semesterMinutes(semesterMinutes)
                 .build();
     }
 }
