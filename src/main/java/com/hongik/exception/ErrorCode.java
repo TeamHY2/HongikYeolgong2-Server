@@ -10,6 +10,9 @@ public enum ErrorCode {
 
     OK(HttpStatus.OK, "응답 성공"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 문제가 발생하였습니다 관리자에게 문의해주세요."),
+    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "입력값이 올바르지 않습니다"),
+    NOT_AUTHORITY(HttpStatus.FORBIDDEN, "권한이 존재하지 않습니다."),
+    REGISTRATION_INCOMPLETE(HttpStatus.FORBIDDEN, "회원가입이 완료되지 않았습니다."),
 
     // User
     ALREADY_EXIST_NICKNAME(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
