@@ -4,14 +4,17 @@ import com.hongik.dto.ApiResponse;
 import com.hongik.dto.auth.request.AppleLoginRequest;
 import com.hongik.dto.auth.request.LoginRequest;
 import com.hongik.dto.auth.response.TokenResponse;
+import com.hongik.exception.ErrorCode;
 import com.hongik.service.auth.AuthService;
+import com.hongik.swagger.ApiErrorCodeExamples;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import static com.hongik.exception.ErrorCode.*;
 
 @Tag(name = "Auth Controller - 소셜 로그인 컨트롤러", description = "로그인할 때 Apple 또는 Google, id_token을 넣어주세요.")
 @RequiredArgsConstructor
@@ -26,6 +29,8 @@ public class AuthController {
 //        return authService.getGoogleLoginView();
 //    }
 
+
+    @ApiErrorCodeExamples({INTERNAL_SERVER_ERROR, INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE})
     @Operation(summary = "구글 소셜 로그인", description = "idToken을 넣어주세요.")
     @PostMapping("/login-google")
     public ApiResponse<TokenResponse> selectGoogleLoginInfo(@Valid @RequestBody LoginRequest request){
@@ -37,12 +42,14 @@ public class AuthController {
 //        return ResponseEntity.ok(authService.login(request));
 //    }
 
+    @ApiErrorCodeExamples({INTERNAL_SERVER_ERROR, INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE})
     @Operation(summary = "애플 소셜 로그인", description = "애플, idToken, email을 넣어주세요.")
     @PostMapping("/login-apple")
     public ApiResponse<TokenResponse> selectAppleLoginInfo(@RequestBody AppleLoginRequest request){
         return ApiResponse.ok(authService.appleLogin(request));
     }
 
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "회원탈퇴", description = "회원탈퇴 기능입니다. 현재 HardDelete")
     @DeleteMapping
     public void deleteUser(Authentication authentication){
