@@ -4,6 +4,7 @@ import com.hongik.dto.ApiResponse;
 import com.hongik.dto.auth.request.AppleLoginRequest;
 import com.hongik.dto.auth.request.LoginRequest;
 import com.hongik.dto.auth.response.TokenResponse;
+import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.ErrorCode;
 import com.hongik.service.auth.AuthService;
 import com.hongik.swagger.ApiErrorCodeExamples;
@@ -52,8 +53,8 @@ public class AuthController {
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "회원탈퇴", description = "회원탈퇴 기능입니다. 현재 HardDelete")
     @DeleteMapping
-    public void deleteUser(Authentication authentication){
+    public ApiResponse<UserResponse> deleteUser(Authentication authentication){
         Long userId = Long.parseLong(authentication.getName());
-        authService.deleteUser(userId);
+        return ApiResponse.ok(authService.deleteUser(userId));
     }
 }

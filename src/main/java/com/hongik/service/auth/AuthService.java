@@ -7,6 +7,7 @@ import com.hongik.dto.auth.request.AppleLoginRequest;
 import com.hongik.dto.auth.request.LoginRequest;
 import com.hongik.dto.auth.response.GoogleInfoResponse;
 import com.hongik.dto.auth.response.TokenResponse;
+import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
 import com.hongik.jwt.JwtUtil;
@@ -95,10 +96,11 @@ public class AuthService {
         return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L), isAlreadyExist);
     }
 
-    public void deleteUser(final Long userId) {
+    public UserResponse deleteUser(final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
         userRepository.delete(user);
+        return UserResponse.of(user);
     }
 }
