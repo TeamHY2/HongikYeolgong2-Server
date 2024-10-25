@@ -2,6 +2,7 @@ package com.hongik.service.weekly;
 
 import com.hongik.domain.weekly.Weekly;
 import com.hongik.domain.weekly.WeeklyRepository;
+import com.hongik.dto.weekly.response.WeeklyOneResponse;
 import com.hongik.dto.weekly.response.WeeklyResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
@@ -103,5 +104,14 @@ public class WeeklyService {
         return weeklyList.stream()
                 .map(WeeklyResponse::of)
                 .toList();
+    }
+
+    public WeeklyOneResponse getWeekly(final LocalDate localDate) {
+        String currentWeekOfMonth = getCurrentWeekOfMonth(localDate);
+        String weekName = currentWeekOfMonth.split("=")[0];
+        int weekNumber = Integer.parseInt(currentWeekOfMonth.split("=")[1]);
+
+
+        return WeeklyOneResponse.of(localDate.getYear(), weekName, weekNumber);
     }
 }

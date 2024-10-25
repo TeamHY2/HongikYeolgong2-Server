@@ -72,7 +72,7 @@ class WeeklyControllerTest {
 
         // when // then
         mockMvc.perform(
-                        get("/api/v1/week-field").with(csrf())
+                        get("/api/v1/week-field/all").with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isOk());

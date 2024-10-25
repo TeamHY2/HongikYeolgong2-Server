@@ -1,6 +1,7 @@
 package com.hongik.controller.weekly;
 
 import com.hongik.dto.ApiResponse;
+import com.hongik.dto.weekly.response.WeeklyOneResponse;
 import com.hongik.dto.weekly.response.WeeklyResponse;
 import com.hongik.service.weekly.WeeklyService;
 import com.hongik.swagger.ApiErrorCodeExamples;
@@ -36,9 +37,16 @@ public class WeeklyController {
 
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "(서버기준)20xx년에 대한 1월 1주차, 1월 2주차... 등 데이터 조회", description = "서버 시간 기준으로 20xx년에 대한 주차 데이터 조회합니다.")
-    @GetMapping
+    @GetMapping("/all")
     public ApiResponse<List<WeeklyResponse>> getWeeklyFields() {
         int year = LocalDate.now().getYear();
         return ApiResponse.ok(weeklyService.getWeeklyFields(year));
+    }
+
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+    @Operation(summary = "LocalDate를 사용하여 몇 월 몇 주차, YearWeek 데이터 조회", description = "2024-10-25 기준 202443 데이터를 받습니다.")
+    @GetMapping
+    public ApiResponse<WeeklyOneResponse> getWeekly(@RequestParam LocalDate date) {
+        return ApiResponse.ok(weeklyService.getWeekly(date));
     }
 }
