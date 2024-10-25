@@ -4,6 +4,8 @@ import com.hongik.domain.study.StudySession;
 import com.hongik.domain.study.StudySessionRepository;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
+import com.hongik.domain.weekly.Weekly;
+import com.hongik.domain.weekly.WeeklyRepository;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
 import com.hongik.dto.study.response.*;
 import com.hongik.exception.AppException;
@@ -28,6 +30,8 @@ public class StudySessionService {
     private final StudySessionRepository studySessionRepository;
 
     private final UserRepository userRepository;
+
+    private final WeeklyRepository weeklyRepository;
 
     @Transactional
     public StudySessionResponse createStudy(StudySessionCreateRequest request, final Long userId) {
@@ -129,11 +133,14 @@ public class StudySessionService {
                 .collect(toList());
     }
 
-    public List<StudyRankingResponse> getStudyDurationRanking(final int yearWeek) {
+    public WeeklyRankingResponse getStudyDurationRanking(final int yearWeek) {
         // ex) 202440 데이터를 넣는다.
         List<Object[]> results = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek);
         // 202439 데이터를 넣는다. (이전 랭킹과 비교하기 위함)
         List<Object[]> results2 = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek - 1);
+
+        Weekly weekly = weeklyRepository.findByWeekNumber(yearWeek)
+                .orElseThrow(() -> new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
 
         // 이전 주차에 랭킹을 department, 순위를 담는다.
         Map<String, Integer> previousResult = new HashMap<>();
@@ -148,12 +155,13 @@ public class StudySessionService {
                     StudyRankingResponse.of(
                             (String) result[0],
                             ((Number) result[1]).longValue() / 3600,
+//                            ((Number) result[1]).longValue(),
                             ((Number) result[2]).intValue(),
                             previousResult.get((String) result[0])
                     )
             );
         }
-        return response;
+        return WeeklyRankingResponse.of(weekly.getWeekName(), response);
     }
 
     private String getCurrentSemester(final int month) {

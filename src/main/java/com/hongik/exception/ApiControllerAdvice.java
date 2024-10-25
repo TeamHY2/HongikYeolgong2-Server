@@ -1,22 +1,17 @@
 package com.hongik.exception;
 
 import com.hongik.dto.ApiResponse;
-import jakarta.security.auth.message.AuthException;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -64,17 +59,19 @@ public class ApiControllerAdvice {
     /**
      * Get 요청을 보내야 하는데 Post 요청을 보냈을 때 발생한다. 405
      */
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+//    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ApiResponse<Object> methodNotSupportedException(Exception e) {
+    public ResponseEntity<ApiResponse<Object>> methodNotSupportedException(Exception e) {
         log.error("methodNotSupportedException = {}", e.getMessage());
-        return ApiResponse.of(
-                HttpStatus.METHOD_NOT_ALLOWED,
-                e.getMessage(),
-                null
-        );
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(ApiResponse.of(
+                        HttpStatus.METHOD_NOT_ALLOWED,
+                        e.getMessage(),
+                        null
+                ));
     }
-    
+
+
     /**
      * RequestParam Validation
      * RequestParam에 유효성 체크 실패하면 발생한다.
@@ -94,28 +91,30 @@ public class ApiControllerAdvice {
      * Exception
      * 위 정의한 예외말고 다른 예외가 발생하면 터진다.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ApiResponse<Object> exception(Exception e) {
+    public ResponseEntity<ApiResponse<Object>> exception(Exception e) {
         log.error("exception = {}", e.getMessage());
-        return ApiResponse.of(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                e.getMessage(),
-                null
-        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.of(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        e.getMessage(),
+                        null
+                ));
     }
 
     /**
      * Admin이 아닐 때 발생하는 예외
      */
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ApiResponse<Object> handleAuthException(AuthorizationDeniedException e) {
+    public ResponseEntity<ApiResponse<Object>> handleAuthException(AuthorizationDeniedException e) {
         log.error("authorizationDeniedException = {}", e.getMessage());
-        return ApiResponse.of(
-                HttpStatus.FORBIDDEN,
-                e.getMessage(),
-                null
-        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.of(
+                        HttpStatus.FORBIDDEN,
+                        e.getMessage(),
+                        null
+                ));
     }
 }
