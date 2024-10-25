@@ -15,25 +15,25 @@ public class StudyRankingResponse {
 
     private int currentRank;
 
-    private int previousRank;
+    private String weekName;
 
     private int rankChange;
 
     @Builder
-    public StudyRankingResponse(final String department, final Long studyDurationOfWeek, final int currentRank, final int previousRank, final int rankChange) {
+    public StudyRankingResponse(final String department, final Long studyDurationOfWeek, final String weekName, final int currentRank, final int rankChange) {
         this.department = department;
         this.studyDurationOfWeek = studyDurationOfWeek;
         this.currentRank = currentRank;
-        this.previousRank = previousRank;
+        this.weekName = weekName;
         this.rankChange = rankChange;
     }
 
-    public static StudyRankingResponse of(final String department, final Long studyDurationOfWeek, final int currentRank, final int previousRank) {
+    public static StudyRankingResponse of(final String department, final Long studyDurationOfWeek, final int currentRank, final String weekName, final int previousRank) {
         return StudyRankingResponse.builder()
                 .department(department)
                 .studyDurationOfWeek(studyDurationOfWeek)
                 .currentRank(currentRank)
-                .previousRank(previousRank)
+                .weekName(weekName)
                 .rankChange(previousRank - currentRank)
                 .build();
     }

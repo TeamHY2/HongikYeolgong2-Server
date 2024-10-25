@@ -86,7 +86,7 @@ public class StudySessionController {
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "(랭킹 화면) 주차별 랭킹을 가져온다.", description = "202401과 같은 데이터를 제공하면 랭킹을 구할 수 있습니다.")
     @GetMapping("/ranking")
-    public ApiResponse<List<StudyRankingResponse>> getStudyDurationRanking(Authentication authentication,
+    public ApiResponse<WeeklyRankingResponse> getStudyDurationRanking(Authentication authentication,
                                                                            @RequestParam int yearWeek) {
         Long userId = Long.parseLong(authentication.getName());
 
