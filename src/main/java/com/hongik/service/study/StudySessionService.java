@@ -157,7 +157,6 @@ public class StudySessionService {
                             ((Number) result[1]).longValue() / 3600,
 //                            ((Number) result[1]).longValue(),
                             ((Number) result[2]).intValue(),
-                            weekly.getWeekName(),
                             previousResult.get((String) result[0])
                     )
             );
