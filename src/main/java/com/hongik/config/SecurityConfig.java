@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/week-field").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/env").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/v1/user/join", "/api/v1/user/duplicate-nickname", "/api/v1/auth/login-google", "/api/v1/auth/login-apple").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
 //                        .anyRequest().authenticated())
