@@ -1,6 +1,7 @@
 package com.hongik.dto.weekly.response;
 
 import com.hongik.domain.weekly.Weekly;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,12 +11,16 @@ import lombok.NoArgsConstructor;
 @Getter
 public class WeeklyResponse {
 
+    @Schema(example = "1")
     private Long id;
 
+    @Schema(example = "2024")
     private int year;
 
+    @Schema(example = "10월 5주차")
     private String weekName; // 1월 1주차, 2주차 ...
 
+    @Schema(example = "202443")
     private int weekNumber; // 202401, 202402, ...
 
     @Builder
