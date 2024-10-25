@@ -108,6 +108,7 @@ public class ApiControllerAdvice {
     /**
      * Admin이 아닐 때 발생하는 예외
      */
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ApiResponse<Object> handleAuthException(AuthorizationDeniedException e) {
         log.error("authorizationDeniedException = {}", e.getMessage());
