@@ -1,10 +1,12 @@
 package com.hongik.exception;
 
 import com.hongik.dto.ApiResponse;
+import jakarta.security.auth.message.AuthException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -98,6 +100,19 @@ public class ApiControllerAdvice {
         log.error("exception = {}", e.getMessage());
         return ApiResponse.of(
                 HttpStatus.INTERNAL_SERVER_ERROR,
+                e.getMessage(),
+                null
+        );
+    }
+
+    /**
+     * Admin이 아닐 때 발생하는 예외
+     */
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ApiResponse<Object> handleAuthException(AuthorizationDeniedException e) {
+        log.error("authorizationDeniedException = {}", e.getMessage());
+        return ApiResponse.of(
+                HttpStatus.FORBIDDEN,
                 e.getMessage(),
                 null
         );
