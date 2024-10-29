@@ -22,16 +22,6 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
                                 @Param("year") int year,
                                 @Param("month") int month,
                                 @Param("day") int day);
-//    @Query(value = "SELECT SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)) " +
-//            "FROM study_session s " +
-//            "WHERE s.user_id = :userId " +
-//            "AND YEAR(s.start_time) = :year " +
-//            "AND MONTH(s.start_time) = :month " +
-//            "AND DAY(s.start_time) = :day", nativeQuery = true)
-//    Long getStudyDurationForDay(@Param("userId") Long userId,
-//                                @Param("year") int year,
-//                                @Param("month") int month,
-//                                @Param("day") int day);
 
     /**
      * 2024년 10월에 대한 공부 시간을 조회한다.
@@ -107,34 +97,17 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             "FROM study_session s " +
             "WHERE s.user_id = :userId", nativeQuery = true)
     Long getTotalStudyTime(@Param("userId") Long userId, @Param("year") int year);
-//    @Query(value = "SELECT " +
-//            "SUM(CASE WHEN YEAR(s.start_time) = :year THEN TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time) " +
-//            "ELSE 0 " +
-//            "END) as year " +
-//            "FROM study_session s " +
-//            "WHERE s.user_id = :userId", nativeQuery = true)
-//    Long getTotalStudyTime(@Param("userId") Long userId, @Param("year") int year, @Param("month") int month, @Param("date") LocalDate date);
 
-    // test
-    @Query(value = "SELECT u.department, " +
-            "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS minute, " +
-            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) as ranking " +
-            "FROM users u " +
+    /**
+     * 주차 데이터를 매개변수로, 랭킹을 조회한다.
+     */
+    @Query(value = "SELECT d.department_name AS department, " +
+            "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS seconds, " +
+            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) AS ranking " +
+            "FROM department d " +
+            "LEFT JOIN users u ON u.department = d.department_name " +
             "LEFT JOIN study_session s ON u.id = s.user_id " +
             "AND YEARWEEK(s.start_time, 1) = :weekYear " +
-            "WHERE u.department IS NOT NULL " +
-            "GROUP BY u.department " +
-            "ORDER BY minute DESC", nativeQuery = true)
+            "GROUP BY d.department_name", nativeQuery = true)
     List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
-
-    // main
-//    @Query(value = "SELECT u.department, " +
-//            "SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)) AS totalStudyTime, " +
-//            "DENSE_RANK() over (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)), 0) DESC) AS ranking " +
-//            "FROM study_session s " +
-//            "JOIN users u ON s.user_id = u.id " +
-//            "WHERE YEARWEEK(s.start_time, 1) = :weekYear " +
-//            "GROUP BY u.department " +
-//            "ORDER BY totalStudyTime DESC", nativeQuery = true)
-//    List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
 }
