@@ -115,16 +115,29 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 //            "WHERE s.user_id = :userId", nativeQuery = true)
 //    Long getTotalStudyTime(@Param("userId") Long userId, @Param("year") int year, @Param("month") int month, @Param("date") LocalDate date);
 
-    // test
-    @Query(value = "SELECT u.department, " +
-            "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS minute, " +
-            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) as ranking " +
-            "FROM users u " +
+//    // test
+//    @Query(value = "SELECT u.department, " +
+//            "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS minute, " +
+//            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) as ranking " +
+//            "FROM users u " +
+//            "LEFT JOIN study_session s ON u.id = s.user_id " +
+//            "AND YEARWEEK(s.start_time, 1) = :weekYear " +
+//            "WHERE u.department IS NOT NULL " +
+//            "GROUP BY u.department " +
+//            "ORDER BY minute DESC", nativeQuery = true)
+//    List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
+
+    /**
+     * 주차 데이터를 매개변수로, 랭킹을 조회한다.
+     */
+    @Query(value = "SELECT d.department_name AS department, " +
+            "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS seconds, " +
+            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) AS ranking " +
+            "FROM department d " +
+            "LEFT JOIN users u ON u.department = d.department_name " +
             "LEFT JOIN study_session s ON u.id = s.user_id " +
             "AND YEARWEEK(s.start_time, 1) = :weekYear " +
-            "WHERE u.department IS NOT NULL " +
-            "GROUP BY u.department " +
-            "ORDER BY minute DESC", nativeQuery = true)
+            "GROUP BY d.department_name", nativeQuery = true)
     List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
 
     // main
