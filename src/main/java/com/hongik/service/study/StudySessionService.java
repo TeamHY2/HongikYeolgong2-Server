@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -98,7 +99,7 @@ public class StudySessionService {
                 .collect(toList());
     }
 
-    public List<StudyCountResponse> getStudyCountOfWeek(LocalDate today, final Long userId) {
+    public List<StudyCountResponse2> getStudyCountOfWeek(LocalDate today, final Long userId) {
         // 이번 주의 시작일 (월요일)
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
 
@@ -128,8 +129,14 @@ public class StudySessionService {
             }
         }
 
-        return week.entrySet().stream()
-                .map(entry -> StudyCountResponse.of(entry.getKey(), entry.getValue()))
+        Map<String, Long> weeks = new LinkedHashMap<>();
+        for (LocalDate localDate : week.keySet()) {
+            String date = localDate.format(DateTimeFormatter.ofPattern("M/dd"));
+            weeks.put(date, week.get(localDate));
+        }
+
+        return weeks.entrySet().stream()
+                .map(entry -> StudyCountResponse2.of(entry.getKey(), entry.getValue()))
                 .collect(toList());
     }
 

@@ -3,10 +3,7 @@ package com.hongik.controller.study;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
-import com.hongik.dto.study.response.StudyCountResponse;
-import com.hongik.dto.study.response.StudyDurationResponse;
-import com.hongik.dto.study.response.StudyRankingResponse;
-import com.hongik.dto.study.response.WeeklyRankingResponse;
+import com.hongik.dto.study.response.*;
 import com.hongik.service.study.StudySessionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -157,7 +154,7 @@ class StudySessionControllerTest {
     @Test
     void getStudyCountOfWeek() throws Exception {
         // given
-        List<StudyCountResponse> result = List.of();
+        List<StudyCountResponse2> result = List.of();
 
         BDDMockito.given(studySessionService.getStudyCountOfWeek(LocalDate.now(), 1L))
                 .willReturn(result);

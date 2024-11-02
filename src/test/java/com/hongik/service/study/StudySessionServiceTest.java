@@ -7,6 +7,7 @@ import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
 import com.hongik.dto.study.response.StudyCountResponse;
+import com.hongik.dto.study.response.StudyCountResponse2;
 import com.hongik.dto.study.response.StudyDurationResponse;
 import com.hongik.dto.study.response.StudySessionResponse;
 import org.assertj.core.api.Assertions;
@@ -168,19 +169,19 @@ class StudySessionServiceTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
 
         // when
-        List<StudyCountResponse> result = studySessionService.getStudyCountOfWeek(today, user.getId());
+        List<StudyCountResponse2> result = studySessionService.getStudyCountOfWeek(today, user.getId());
 
         // then
         assertThat(result).hasSize(7)
                 .extracting("date", "studyCount")
                 .containsExactly(
-                        tuple(LocalDate.of(2024, 9, 16), 0L),
-                        tuple(LocalDate.of(2024, 9, 17), 0L),
-                        tuple(LocalDate.of(2024, 9, 18), 0L),
-                        tuple(LocalDate.of(2024, 9, 19), 2L),
-                        tuple(LocalDate.of(2024, 9, 20), 1L),
-                        tuple(LocalDate.of(2024, 9, 21), 0L),
-                        tuple(LocalDate.of(2024, 9, 22), 0L)
+                        tuple("9/16", 0L),
+                        tuple("9/17", 0L),
+                        tuple("9/18", 0L),
+                        tuple("9/19", 2L),
+                        tuple("9/20", 1L),
+                        tuple("9/21", 0L),
+                        tuple("9/22", 0L)
 
                 );
     }

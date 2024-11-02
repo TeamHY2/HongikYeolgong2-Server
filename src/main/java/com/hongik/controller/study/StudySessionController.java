@@ -76,7 +76,7 @@ public class StudySessionController {
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "(홈 화면 명언과 함께 나타낼 데이터) 서버의 현재 날짜 기준으로 주단위 월, 일, 공부 횟수를 가져옵니다.", description = "한 주에 대한 공부 횟수를 조회합니다.")
     @GetMapping("/week")
-    public ApiResponse<List<StudyCountResponse>> getStudyCountOfWeek(Authentication authentication) {
+    public ApiResponse<List<StudyCountResponse2>> getStudyCountOfWeek(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         LocalDate today = LocalDate.now();
 
