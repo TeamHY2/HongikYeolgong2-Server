@@ -108,10 +108,9 @@ public class WeeklyService {
 
     public WeeklyOneResponse getWeekly(final LocalDate localDate) {
         String currentWeekOfMonth = getCurrentWeekOfMonth(localDate);
-        String weekName = currentWeekOfMonth.split("=")[0];
         int weekNumber = Integer.parseInt(currentWeekOfMonth.split("=")[1]);
 
 
-        return WeeklyOneResponse.of(localDate.getYear(), weekName, weekNumber);
+        return WeeklyOneResponse.of(weekNumber);
     }
 }

@@ -1,12 +1,8 @@
 package com.hongik.controller.study;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
-import com.hongik.dto.study.response.StudyCountResponse;
-import com.hongik.dto.study.response.StudyDurationResponse;
-import com.hongik.dto.study.response.StudyRankingResponse;
-import com.hongik.dto.study.response.WeeklyRankingResponse;
+import com.hongik.dto.study.response.*;
 import com.hongik.service.study.StudySessionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -137,7 +132,7 @@ class StudySessionControllerTest {
     @Test
     void getStudyCount() throws Exception {
         // given
-        List<StudyCountResponse> result = List.of();
+        List<StudyCountLocalDateResponse> result = List.of();
 
         BDDMockito.given(studySessionService.getStudyCount(2024, 9, 1L))
                 .willReturn(result);

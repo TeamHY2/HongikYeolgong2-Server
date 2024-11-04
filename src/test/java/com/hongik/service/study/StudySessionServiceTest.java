@@ -6,10 +6,10 @@ import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
+import com.hongik.dto.study.response.StudyCountLocalDateResponse;
 import com.hongik.dto.study.response.StudyCountResponse;
 import com.hongik.dto.study.response.StudyDurationResponse;
 import com.hongik.dto.study.response.StudySessionResponse;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -135,7 +135,7 @@ class StudySessionServiceTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
 
         // when
-        List<StudyCountResponse> result = studySessionService.getStudyCount(2024, 9, user.getId());
+        List<StudyCountLocalDateResponse> result = studySessionService.getStudyCount(2024, 9, user.getId());
 
         // then
         assertThat(result).hasSize(2)
@@ -174,13 +174,13 @@ class StudySessionServiceTest {
         assertThat(result).hasSize(7)
                 .extracting("date", "studyCount")
                 .containsExactly(
-                        tuple(LocalDate.of(2024, 9, 16), 0L),
-                        tuple(LocalDate.of(2024, 9, 17), 0L),
-                        tuple(LocalDate.of(2024, 9, 18), 0L),
-                        tuple(LocalDate.of(2024, 9, 19), 2L),
-                        tuple(LocalDate.of(2024, 9, 20), 1L),
-                        tuple(LocalDate.of(2024, 9, 21), 0L),
-                        tuple(LocalDate.of(2024, 9, 22), 0L)
+                        tuple("9/16", 0L),
+                        tuple("9/17", 0L),
+                        tuple("9/18", 0L),
+                        tuple("9/19", 2L),
+                        tuple("9/20", 1L),
+                        tuple("9/21", 0L),
+                        tuple("9/22", 0L)
 
                 );
     }
