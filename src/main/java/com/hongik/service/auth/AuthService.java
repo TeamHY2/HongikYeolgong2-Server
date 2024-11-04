@@ -64,7 +64,7 @@ public class AuthService {
                     .build());
         }
 
-        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L), isAlreadyExist);
+        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L), isAlreadyExist);
     }
 
     @Transactional
@@ -93,7 +93,7 @@ public class AuthService {
                     .build());
         }
 
-        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L), isAlreadyExist);
+        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L), isAlreadyExist);
     }
 
     public UserResponse deleteUser(final Long userId) {
