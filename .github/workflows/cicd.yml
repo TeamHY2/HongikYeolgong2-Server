@@ -110,17 +110,17 @@ jobs:
 #            sudo docker stop ${{env.CURRENT_UPSTREAM}}
 #            sudo docker rm ${{env.CURRENT_UPSTREAM}}
 
-      - name: Stop current server (develop)
-#        if: github.ref == 'refs/heads/develop'
-        uses: appleboy/ssh-action@master
-        with:
-          username: ubuntu
-          host: ${{ secrets.DEV_SERVER_IP }}
-          key: ${{ secrets.DEV_SSH_KEY }}
-          script_stop: true
-          script: |
-            sudo docker stop dev
-            sudo docker rm dev
+#      - name: Stop current server (develop)
+##        if: github.ref == 'refs/heads/develop'
+#        uses: appleboy/ssh-action@master
+#        with:
+#          username: ubuntu
+#          host: ${{ secrets.DEV_SERVER_IP }}
+#          key: ${{ secrets.DEV_SSH_KEY }}
+#          script_stop: true
+#          script: |
+#            sudo docker stop dev
+#            sudo docker rm dev
 
 #      - name: Docker compose (main)
 #        if: github.ref == 'refs/heads/main'
