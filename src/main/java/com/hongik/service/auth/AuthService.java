@@ -44,7 +44,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponse login(LoginRequest request) {
+    public TokenResponse googleLogin(LoginRequest request) {
         User user = null;
         boolean isAlreadyExist = false;
         GoogleInfoResponse googleInfoResponse = googleLoginService.login(request);
