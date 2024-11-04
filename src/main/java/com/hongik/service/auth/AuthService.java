@@ -96,6 +96,8 @@ public class AuthService {
                 }
             }
         } else {
+            // else 문을 탈 때는, UID값이 존재한다는 뜻이고
+            // UID가 존재한다면 findByPassword 를 통해서 계정을 찾을 수 있다.
             user = userRepository.findByPassword(email).get();
             user.updateSub(sub);
             if (user.getRole().equals(Role.USER)) {
