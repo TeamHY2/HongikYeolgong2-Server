@@ -43,6 +43,9 @@
 //
 //        List<User> users = new ArrayList<>();
 //        for (Member member : list) {
+//            if (member.getId() == null || member.getNickname() == null || member.getDepartment() == null) {
+//                continue;
+//            }
 //            User user = User.builder()
 //                    .role(Role.USER)
 //                    .department(member.getDepartment())
@@ -52,6 +55,7 @@
 //                    .build();
 //            users.add(user);
 //        }
+////        System.out.println("list.size() = " + list.size());
 //
 //        userRepository.saveAll(users);
 //        return list;
@@ -72,14 +76,14 @@
 //        }
 //    }
 //
+//    /**
+//     * 11-04 오후 1:50 최신화
+//     */
 //    public List<StudyDay> getAllStudyDays() throws ExecutionException, InterruptedException {
 //        List<User> users = userRepository.findAll();
 //        List<StudySession> sessions = new ArrayList<>();
 //        List<StudyDay> list = new ArrayList<>();
 //        for (User user : users) {
-//            if (user.getPassword() == null || user.getId() < 15L) {
-//                continue;
-//            }
 //
 //            if (user.getNickname().equals("기계")) {
 //                // 1c7kWGDroJPxbUl8lixOg8W6AYy2
@@ -95,6 +99,38 @@
 //                // vYQmuWNMVZVnzbFaAbkG4HAS1s72
 //                continue;
 //            }
+//
+//            if (user.getNickname().equals("깜까미")) {
+//                // DGQhhvkSPvagN1ARmXPr3wEkgmF2
+//                continue;
+//            }
+//
+//            if (user.getNickname().equals("러이")) {
+//                // KU2N5Tx2IYQ9QEpXJbZin5o7hqs1
+//                continue;
+//            }
+//
+//            if (user.getNickname().equals("람드")) {
+//                // LdjPWimIR1PjR0gcRp4C1L0mTGr2
+//                continue;
+//            }
+//
+//            if (user.getNickname().equals("자몽소다")) {
+//                // OkIBFLuGdHR2ytdi3cjEw26F4jc2
+//                continue;
+//            }
+//
+//            if (user.getNickname().equals("무구정광헌")) {
+//                // QqcpsfFbQ9QfXzKI7MUPK0d1HnE2
+//                continue;
+//            }
+//
+//            if (user.getNickname().equals("점수를주호")) {
+//                // VUJ31eGhHvYlxLXXf1vbTPbjg0J2
+//                continue;
+//            }
+//
+//
 //            System.out.println("user.getNickname() = " + user.getNickname());
 //            ApiFuture<QuerySnapshot> future =
 //                    FIRE_STORE.collection(COLLECTION_NAME)
