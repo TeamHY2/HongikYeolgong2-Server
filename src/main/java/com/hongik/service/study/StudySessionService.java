@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.WeekFields;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -73,33 +71,33 @@ public class StudySessionService {
         return StudyDurationResponse.of(yearHours, yearMinutes, monthHours, monthMinutes, dayHours, dayMinutes, semesterHours, semesterMinutes);
     }
 
-    public List<StudyCountResponse> getStudyCount(final int year, final int month, final Long userId) {
+    public List<StudyCountLocalDateResponse> getStudyCount(final int year, final int month, final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
         List<Object[]> results = studySessionRepository.getStudyCountByMonth(userId, year, month);
         return results.stream()
-                .map(result -> StudyCountResponse.of(
+                .map(result -> StudyCountLocalDateResponse.of(
                         ((java.sql.Date) result[0]).toLocalDate(),
                         ((Number) result[1]).longValue()
                 ))
                 .collect(toList());
     }
 
-    public List<StudyCountResponse> getStudyCountAll(final Long userId) {
+    public List<StudyCountLocalDateResponse> getStudyCountAll(final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
         List<Object[]> results = studySessionRepository.getStudyCountByAll(userId);
         return results.stream()
-                .map(result -> StudyCountResponse.of(
+                .map(result -> StudyCountLocalDateResponse.of(
                         ((java.sql.Date) result[0]).toLocalDate(),
                         ((Number) result[1]).longValue()
                 ))
                 .collect(toList());
     }
 
-    public List<StudyCountResponse2> getStudyCountOfWeek(LocalDate today, final Long userId) {
+    public List<StudyCountResponse> getStudyCountOfWeek(LocalDate today, final Long userId) {
         // 이번 주의 시작일 (월요일)
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
 
@@ -136,7 +134,7 @@ public class StudySessionService {
         }
 
         return weeks.entrySet().stream()
-                .map(entry -> StudyCountResponse2.of(entry.getKey(), entry.getValue()))
+                .map(entry -> StudyCountResponse.of(entry.getKey(), entry.getValue()))
                 .collect(toList());
     }
 

@@ -6,11 +6,10 @@ import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
+import com.hongik.dto.study.response.StudyCountLocalDateResponse;
 import com.hongik.dto.study.response.StudyCountResponse;
-import com.hongik.dto.study.response.StudyCountResponse2;
 import com.hongik.dto.study.response.StudyDurationResponse;
 import com.hongik.dto.study.response.StudySessionResponse;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -136,7 +135,7 @@ class StudySessionServiceTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
 
         // when
-        List<StudyCountResponse> result = studySessionService.getStudyCount(2024, 9, user.getId());
+        List<StudyCountLocalDateResponse> result = studySessionService.getStudyCount(2024, 9, user.getId());
 
         // then
         assertThat(result).hasSize(2)
@@ -169,7 +168,7 @@ class StudySessionServiceTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
 
         // when
-        List<StudyCountResponse2> result = studySessionService.getStudyCountOfWeek(today, user.getId());
+        List<StudyCountResponse> result = studySessionService.getStudyCountOfWeek(today, user.getId());
 
         // then
         assertThat(result).hasSize(7)

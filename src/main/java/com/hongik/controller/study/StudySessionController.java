@@ -10,14 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.hongik.exception.ErrorCode.*;
@@ -52,9 +48,9 @@ public class StudySessionController {
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "특정 날짜 공부 횟수 조회", description = "해당 년, 월에 대한 데이터를 넣어주세요.")
     @GetMapping("/count")
-    public ApiResponse<List<StudyCountResponse>> getStudyCount(@RequestParam int year,
-                                                               @RequestParam int month,
-                                                               Authentication authentication) {
+    public ApiResponse<List<StudyCountLocalDateResponse>> getStudyCount(@RequestParam int year,
+                                                                        @RequestParam int month,
+                                                                        Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(studySessionService.getStudyCount(year, month, userId));
     }
@@ -62,7 +58,7 @@ public class StudySessionController {
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "(기록 화면 캘린더 공부 횟수) 모든 날짜 공부 횟수 조회", description = "모든 날짜에 대한 공부 횟수를 조회합니다.")
     @GetMapping("/count-all")
-    public ApiResponse<List<StudyCountResponse>> getStudyCountAll(Authentication authentication) {
+    public ApiResponse<List<StudyCountLocalDateResponse>> getStudyCountAll(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(studySessionService.getStudyCountAll(userId));
     }
@@ -76,7 +72,7 @@ public class StudySessionController {
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "(홈 화면 명언과 함께 나타낼 데이터) 서버의 현재 날짜 기준으로 주단위 월, 일, 공부 횟수를 가져옵니다.", description = "한 주에 대한 공부 횟수를 조회합니다.")
     @GetMapping("/week")
-    public ApiResponse<List<StudyCountResponse2>> getStudyCountOfWeek(Authentication authentication) {
+    public ApiResponse<List<StudyCountResponse>> getStudyCountOfWeek(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         LocalDate today = LocalDate.now();
 

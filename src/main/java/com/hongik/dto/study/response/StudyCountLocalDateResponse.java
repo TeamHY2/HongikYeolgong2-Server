@@ -10,22 +10,22 @@ import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class StudyCountResponse2 {
+public class StudyCountLocalDateResponse {
 
-    @Schema(example = "9/19")
-    private String date;
+    @Schema(example = "2024-09-19")
+    private LocalDate date;
 
     @Schema(example = "3")
     private Long studyCount;
 
     @Builder
-    public StudyCountResponse2(final String date, final Long studyCount) {
+    public StudyCountLocalDateResponse(final LocalDate date, final Long studyCount) {
         this.date = date;
         this.studyCount = studyCount;
     }
 
-    public static StudyCountResponse2 of(final String date, final Long studyCount) {
-        return StudyCountResponse2.builder()
+    public static StudyCountLocalDateResponse of(final LocalDate date, final Long studyCount) {
+        return StudyCountLocalDateResponse.builder()
                 .date(date)
                 .studyCount(studyCount)
                 .build();
