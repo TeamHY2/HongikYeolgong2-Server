@@ -77,21 +77,47 @@ public class AuthService {
         String sub = appleInfoResponse.get("sub", String.class);
         String email = request.getEmail();
 
-        // email로 회원을 찾고, 존재하면 sub값 갱신하여 로그인한다.
-        if (userRepository.findByUsername(email).isPresent()) {
-            user = userRepository.findByUsername(email).get();
+        // 신규 회원 (request.getEmail()이 비어있을 때 신규 회원)
+        // 신규 회원일 때, sub에는 email 값이 같이 들어있는 상태다.
+        if (request.getEmail().isBlank()) {
+            // 신규 회원으로 가입한 후, 다시 로그인 하였을 때
+            // sub값을 이용하여 User를 조회하고, 존재하지 않을 경우 계정 생성
+            if (userRepository.findBySub(sub).isEmpty()) {
+                user = userRepository.save(User.builder()
+                        .username(appleInfoResponse.get("email", String.class))
+                        .sub(sub)
+                        .role(Role.GUEST)
+                        .build());
+            } else {
+                // 존재하는 경우
+                user = userRepository.findBySub(sub).get();
+                if (user.getRole().equals(Role.USER)) {
+                    isAlreadyExist = true;
+                }
+            }
+        } else {
+            user = userRepository.findByPassword(email).get();
             user.updateSub(sub);
             if (user.getRole().equals(Role.USER)) {
                 isAlreadyExist = true;
             }
-        } else {
-            // 존재하지 않으면 새로운 회원을 만든다.
-            user = userRepository.save(User.builder()
-                    .username(email)
-                    .sub(sub)
-                    .role(Role.GUEST)
-                    .build());
         }
+
+//        // email로 회원을 찾고, 존재하면 sub값 갱신하여 로그인한다.
+//        if (userRepository.findByUsername(email).isPresent()) {
+//            user = userRepository.findByUsername(email).get();
+//            user.updateSub(sub);
+//            if (user.getRole().equals(Role.USER)) {
+//                isAlreadyExist = true;
+//            }
+//        } else {
+//            // 존재하지 않으면 새로운 회원을 만든다.
+//            user = userRepository.save(User.builder()
+//                    .username(email)
+//                    .sub(sub)
+//                    .role(Role.GUEST)
+//                    .build());
+//        }
 
         return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L), isAlreadyExist);
     }
