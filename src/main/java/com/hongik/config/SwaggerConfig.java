@@ -5,6 +5,7 @@ import com.hongik.swagger.ApiErrorCodeExample;
 import com.hongik.swagger.ApiErrorCodeExamples;
 import com.hongik.swagger.ErrorResponseDto;
 import com.hongik.swagger.ExampleHolder;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.examples.Example;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,13 +31,25 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
+        String jwtSchemeName = "jwt";
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+
+        Components components = new Components()
+                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
+                        .name(jwtSchemeName)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT"));
+
         Info info = new Info()
                 .version("v1.0")
                 .title("홍익열공이")
                 .description("열람실 이용 및 공부 시간과 횟수를 조회");
 
         return new OpenAPI()
-                .info(info);
+                .info(info)
+                .addSecurityItem(securityRequirement)
+                .components(components);
     }
 
     @Bean
