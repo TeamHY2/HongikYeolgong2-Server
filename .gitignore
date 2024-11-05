@@ -38,5 +38,6 @@ out/
 
 application-secret.yml
 application-oauth.yml
+application-dev.yml
 
 hongikyeolgong2.json
