@@ -36,7 +36,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Build with Gradle (develop)
-#        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/develop'
         run: |
           echo ${{ secrets.APPLICATION_DEV }} | base64 --decode > ./src/main/resources/application-dev.yml
           echo ${{ secrets.APPLICATION_OAUTH }} | base64 --decode > ./src/main/resources/application-oauth.yml
