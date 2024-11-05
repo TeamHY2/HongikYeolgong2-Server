@@ -7,17 +7,25 @@ import com.hongik.dto.user.request.NicknameRequest;
 import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.request.UserJoinRequest;
 import com.hongik.dto.user.request.UsernameRequest;
+import com.hongik.dto.user.response.JoinResponse;
 import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
+import com.hongik.jwt.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 @SpringBootTest
 class UserServiceTest {
@@ -30,6 +38,9 @@ class UserServiceTest {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @AfterEach
     void tearDown() {
@@ -63,20 +74,21 @@ class UserServiceTest {
         // given
         User user = joinUser("user@gmail.com");
         userRepository.save(user);
-
         UserJoinRequest request = UserJoinRequest.builder()
                 .nickname("nickname")
                 .department("department")
                 .build();
 
+        BDDMockito.given(jwtUtil.createAccessToken(any(), anyLong())).willReturn("ey");
+
         // when
-        UserResponse userResponse = userService.join(request, user.getId());
+        JoinResponse userResponse = userService.join(request, user.getId());
 
         // then
         assertThat(userResponse.getId()).isNotNull();
         assertThat(userResponse)
-                .extracting("username", "nickname", "department")
-                .containsExactlyInAnyOrder("user@gmail.com", "nickname", "department");
+                .extracting("username", "nickname", "department", "accessToken")
+                .containsExactlyInAnyOrder("user@gmail.com", "nickname", "department", "ey");
     }
 
     @DisplayName("회원가입을 진행할 때 중복된 닉네임이 존재하면 예외가 발생한다.")

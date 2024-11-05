@@ -4,10 +4,12 @@ import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.UserCreateRequest;
 import com.hongik.dto.user.request.UserJoinRequest;
+import com.hongik.dto.user.response.JoinResponse;
 import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
+import com.hongik.jwt.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
@@ -50,7 +53,7 @@ public class UserService {
      * 소셜 로그인 후, 닉네임과 학과를 입력하여 최종 회원가입을 한다.
      */
     @Transactional
-    public UserResponse join(UserJoinRequest request, final Long userId) {
+    public JoinResponse join(UserJoinRequest request, final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
@@ -59,7 +62,8 @@ public class UserService {
         }
 
         user.join(request.getNickname(), request.getDepartment());
-        return UserResponse.of(user);
+        String accessToken = jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L);
+        return JoinResponse.of(user, accessToken);
     }
 
     public UserResponse getUserInfo(final Long userId) {
