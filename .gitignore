@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+application-secret.yml
+application-oauth.yml
+application-dev.yml
+
+hongikyeolgong2.json
