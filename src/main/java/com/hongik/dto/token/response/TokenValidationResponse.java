@@ -14,12 +14,12 @@ public class TokenValidationResponse {
     private boolean isValidToken;
 
     @Schema(example = "USER")
-    private String Role;
+    private String role;
 
     @Builder
     public TokenValidationResponse(final boolean isValidToken, final String role) {
         this.isValidToken = isValidToken;
-        Role = role;
+        this.role = role;
     }
 
     public static TokenValidationResponse of(final boolean isValidToken, final String role) {
