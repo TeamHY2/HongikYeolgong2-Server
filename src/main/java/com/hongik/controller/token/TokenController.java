@@ -21,7 +21,7 @@ import static com.hongik.exception.ErrorCode.*;
 public class TokenController {
 
     @ApiErrorCodeExamples({INVALID_INPUT_VALUE, INVALID_JWT_EXCEPTION, INVALID_EXPIRATION_JWT_EXCEPTION})
-    @Operation(summary = "토큰 유효성 및 유저 권한 응답", description = "토큰이 유효하지 않으면 예외가 발생합니다.")
+    @Operation(summary = "토큰 유효성 및 유저 권한 응답", description = "토큰이 유효하지 않으면 401예외가 발생합니다.<br> role은 USER, GUEST, ADMIN 값이 옵니다.")
     @GetMapping
     public ApiResponse<TokenValidationResponse> validateToken(Authentication authentication) {
         String role = "";
