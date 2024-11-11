@@ -15,9 +15,11 @@ import com.hongik.service.auth.apple.AppleSocialLoginService;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthService {
@@ -78,18 +80,22 @@ public class AuthService {
         String sub = appleInfoResponse.get("sub", String.class);
         String email = request.getEmail();
 
+//        log.info("email = {}", email);
         // 신규 회원 (request.getEmail()이 비어있을 때 신규 회원)
         // 신규 회원일 때, sub에는 email 값이 같이 들어있는 상태다.
         if (request.getEmail().isBlank()) {
+            log.info("email is blank");
             // 신규 회원으로 가입한 후, 다시 로그인 하였을 때
             // sub값을 이용하여 User를 조회하고, 존재하지 않을 경우 계정 생성
             if (userRepository.findBySub(sub).isEmpty()) {
+                log.info("subIsEmpty, 신규 회원");
                 user = userRepository.save(User.builder()
                         .username(appleInfoResponse.get("email", String.class))
                         .sub(sub)
                         .role(Role.GUEST)
                         .build());
             } else {
+                log.info("subIsNotEmpty, 기존 회원");
                 // 존재하는 경우
                 user = userRepository.findBySub(sub).get();
                 if (user.getRole().equals(Role.USER)) {
@@ -99,6 +105,7 @@ public class AuthService {
         } else {
             // else 문을 탈 때는, UID값이 존재한다는 뜻이고
             // UID가 존재한다면 findByPassword 를 통해서 계정을 찾을 수 있다.
+            log.info("UID값 존재 = {}", email);
             user = userRepository.findByPassword(email).get();
             user.updateSub(sub);
             if (user.getRole().equals(Role.USER)) {
