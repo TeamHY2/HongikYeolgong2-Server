@@ -50,10 +50,10 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
      */
     @Query(value = "SELECT " +
             "CASE " +
-            "WHEN :semester = 'winter' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (1, 2) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END) " +
-            "WHEN :semester = 'first' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (3, 4, 5, 6) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END) " +
-            "WHEN :semester = 'summer' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (7, 8) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END)" +
-            "WHEN :semester = 'second' THEN SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (9, 10, 11, 12) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END) " +
+            "WHEN :semester = 'winter' THEN IFNULL(SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (1, 2) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END), 0) " +
+            "WHEN :semester = 'first' THEN IFNULL(SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (3, 4, 5, 6) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END), 0) " +
+            "WHEN :semester = 'summer' THEN IFNULL(SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (7, 8) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END), 0)" +
+            "WHEN :semester = 'second' THEN IFNULL(SUM(CASE WHEN YEAR(s.start_time) = :year AND MONTH(s.start_time) IN (9, 10, 11, 12) THEN TIMESTAMPDIFF(SECOND, s.start_time, s.end_time) ELSE 0 END), 0) " +
             "ELSE 0 END AS semesterStudyTime " +
             "FROM study_session s " +
             "WHERE s.user_id = :userId", nativeQuery = true)
