@@ -106,10 +106,20 @@ public class AuthService {
             // else 문을 탈 때는, UID값이 존재한다는 뜻이고
             // UID가 존재한다면 findByPassword 를 통해서 계정을 찾을 수 있다.
             log.info("UID값 존재 = {}", email);
-            user = userRepository.findByPassword(email).get();
-            user.updateSub(sub);
-            if (user.getRole().equals(Role.USER)) {
-                isAlreadyExist = true;
+            if (userRepository.findByPassword(email).isEmpty()) {
+                log.info("findByPassword로 유저가 없음, 회원탈퇴 후 재가입 회원");
+                user = userRepository.save(User.builder()
+                        .username(appleInfoResponse.get("email", String.class))
+                        .sub(sub)
+                        .role(Role.GUEST)
+                        .build());
+            } else {
+                log.info("파이어베이스에 존재하는 유저가 로그인한 상황");
+                user = userRepository.findByPassword(email).get();
+                user.updateSub(sub);
+                if (user.getRole().equals(Role.USER)) {
+                    isAlreadyExist = true;
+                }
             }
         }
 
