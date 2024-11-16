@@ -62,7 +62,7 @@ public class UserService {
         }
 
         user.join(request.getNickname(), request.getDepartment());
-        String accessToken = jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 30L);
+        String accessToken = jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L);
         return JoinResponse.of(user, accessToken);
     }
 

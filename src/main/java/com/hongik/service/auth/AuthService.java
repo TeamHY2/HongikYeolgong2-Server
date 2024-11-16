@@ -66,8 +66,7 @@ public class AuthService {
                     .build());
         }
 
-//        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L), isAlreadyExist);
-        return TokenResponse.of(jwtUtil.createAccessToken(user, 10000 * 30L), isAlreadyExist);
+        return TokenResponse.of(jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L), isAlreadyExist);
     }
 
     @Transactional
