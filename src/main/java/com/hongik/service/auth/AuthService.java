@@ -96,6 +96,10 @@ public class AuthService {
             } else {
                 log.info("subIsNotEmpty, 기존 회원");
                 // 존재하는 경우
+                user = userRepository.findBySub(sub).get();
+                if (user.getRole().equals(Role.USER)) {
+                    isAlreadyExist = true;
+                }
 
             }
         } else {
