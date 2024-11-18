@@ -84,15 +84,20 @@ public class StudySessionService {
                 .collect(toList());
     }
 
+    /**
+     * 20xx년 전체 공부 횟수를 조회한다.
+     * 캘린더에 공부 횟수로 색칠한다.
+     */
     public List<StudyCountLocalDateResponse> getStudyCountAll(final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
-        List<Object[]> results = studySessionRepository.getStudyCountByAll(userId);
+        List<StudyCountLocalDate> results = studySessionRepository.getStudyCountByAll(userId);
+
         return results.stream()
                 .map(result -> StudyCountLocalDateResponse.of(
-                        ((java.sql.Date) result[0]).toLocalDate(),
-                        ((Number) result[1]).longValue()
+                        result.getDate(),
+                        result.getStudyCount()
                 ))
                 .collect(toList());
     }

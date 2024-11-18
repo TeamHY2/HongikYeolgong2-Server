@@ -1,5 +1,6 @@
 package com.hongik.domain.study;
 
+import com.hongik.dto.study.response.StudyCountLocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -71,11 +72,15 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
                                         @Param("year") int year,
                                         @Param("month") int month);
 
+    /**
+     * 20xx년 전체 공부 횟수를 조회한다.
+     * 캘린더에 공부 횟수로 색칠한다.
+     */
     @Query(value = "SELECT DATE(s.start_time) AS date, COUNT(*) AS studyCount " +
             "FROM study_session s " +
             "WHERE s.user_id = :userId " +
             "GROUP BY DATE(s.start_time)", nativeQuery = true)
-    List<Object[]> getStudyCountByAll(@Param("userId") Long userId);
+    List<StudyCountLocalDate> getStudyCountByAll(@Param("userId") Long userId);
 
     @Query(value = "SELECT DATE(s.start_time) AS date, COUNT(*) AS studyCount " +
             "FROM study_session s " +
