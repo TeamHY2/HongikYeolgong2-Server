@@ -83,6 +83,12 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             "GROUP BY DATE(s.start_time)", nativeQuery = true)
     List<StudyCountLocalDate> getStudyCountByAll(@Param("userId") Long userId);
 
+    /**
+     * 20xx년 x월 x일에 대한 월요일~일요일 공부 횟수를 조회한다.
+     * 홈 화면 일주일 캘린더에 공부 횟수로 색칠한다.
+     * 반환값은 LocalDate, Long
+     * @return StudyCount(LocalDate, Long)
+     */
     @Query(value = "SELECT DATE(s.start_time) AS date, COUNT(*) AS studyCount " +
             "FROM study_session s " +
             "WHERE s.user_id = :userId " +

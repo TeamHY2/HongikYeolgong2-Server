@@ -102,6 +102,12 @@ public class StudySessionService {
                 .collect(toList());
     }
 
+    /**
+     * 20xx년 x월 x일에 대한 월요일~일요일 공부 횟수를 조회한다.
+     * 홈 화면 일주일 캘린더에 공부 횟수로 색칠한다.
+     * 반환값은 String(M/dd), Long 형식이다. ex) 10/1, 3 ... 10/2, 2 ... 10/7 5
+     * @return StudyCountResponse(String, Long)
+     */
     public List<StudyCountResponse> getStudyCountOfWeek(LocalDate today, final Long userId) {
         // 이번 주의 시작일 (월요일)
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
