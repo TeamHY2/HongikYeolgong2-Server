@@ -1,5 +1,6 @@
 package com.hongik.domain.study;
 
+import com.hongik.dto.study.response.StudyCount;
 import com.hongik.dto.study.response.StudyCountLocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -87,7 +88,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             "WHERE s.user_id = :userId " +
             "and DATE(s.start_time) in :dates " +
             "GROUP BY DATE(s.start_time)", nativeQuery = true)
-    List<Object[]> getStudyCountByWeek(@Param("userId") Long userId, List<LocalDate> dates);
+    List<StudyCount> getStudyCountByWeek(@Param("userId") Long userId, List<LocalDate> dates);
 
     /**
      * 2024년 10월 01일 기준
