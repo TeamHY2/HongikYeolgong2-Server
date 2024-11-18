@@ -165,7 +165,7 @@ class UserControllerTest {
     }
 
     @DisplayName("회원가입할 때 닉네임은 길이 2~8자, 띄어쓰기와 특수문자는 허용하지 않는다.")
-    @CsvSource({"닉 네 임", "닉네임!!", "닉네임8자넘었습니다", "닉", "!!!!", "......"})
+    @CsvSource({"닉 네 임", "닉네임!!", "닉네임8자넘었습니다", "닉", "!!!!", "......", "안녕2"})
     @ParameterizedTest
     void createUserWithInvalidNickname(final String nickname) throws Exception {
         // given
@@ -186,7 +186,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("띄어쓰기, 특수문자는 불가능하고, 2~8자까지 허용합니다."));
+                .andExpect(jsonPath("$.message").value("띄어쓰기, 숫자, 특수문자는 불가능하고, 2~8자까지 허용합니다."));
     }
 
     @DisplayName("닉네임 중복검사")
@@ -222,7 +222,7 @@ class UserControllerTest {
     }
 
     @DisplayName("닉네임 중복검사할 때 닉네임은 길이 2~8자, 띄어쓰기와 특수문자는 허용하지 않는다.")
-    @CsvSource({"닉 네 임", "닉네임!!", "닉네임8자넘었습니다", "닉", "!!!!", "......"})
+    @CsvSource({"닉 네 임", "닉네임!!", "닉네임8자넘었습니다", "닉", "!!!!", "......", "안녕1"})
     @ParameterizedTest
     void duplicateNicknameWithInvalidNickname(final String nickname) throws Exception {
         // given
@@ -237,7 +237,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("띄어쓰기, 특수문자는 불가능하고, 2~8자까지 허용합니다."));
+                .andExpect(jsonPath("$.message").value("띄어쓰기, 숫자, 특수문자는 불가능하고, 2~8자까지 허용합니다."));
     }
 
     @DisplayName("이메일 중복검사할 때 이메일은 필수값이다.")

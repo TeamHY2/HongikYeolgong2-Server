@@ -24,7 +24,7 @@ public class UserCreateRequest {
 
     @Schema(example = "닉네임")
     @NotBlank(message = "닉네임은 필수입니다.")
-    @Pattern(regexp = "^[A-Za-z0-9가-힣]{2,8}$", message = "띄어쓰기, 특수문자는 불가능하고, 2~8자까지 허용합니다.")
+    @Pattern(regexp = "^[A-Za-z가-힣]{2,8}$", message = "띄어쓰기, 숫자, 특수문자는 불가능하고, 2~8자까지 허용합니다.")
     private String nickname;
 
     @Schema(example = "디자인학부")
