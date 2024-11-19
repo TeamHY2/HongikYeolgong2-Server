@@ -2,6 +2,7 @@ package com.hongik.domain.study;
 
 import com.hongik.dto.study.response.StudyCount;
 import com.hongik.dto.study.response.StudyCountLocalDate;
+import com.hongik.dto.study.response.StudyRanking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -121,5 +122,5 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             "LEFT JOIN study_session s ON u.id = s.user_id " +
             "AND YEARWEEK(s.start_time, 1) = :weekYear " +
             "GROUP BY d.department_name", nativeQuery = true)
-    List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
+    List<StudyRanking> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
 }
