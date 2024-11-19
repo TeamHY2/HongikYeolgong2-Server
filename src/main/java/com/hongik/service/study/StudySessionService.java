@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -142,34 +143,35 @@ public class StudySessionService {
                 .collect(toList());
     }
 
+    /**
+     * 현재 주차의 랭킹과 이전 주차의 랭킹을 구합니다.
+     * 이전 주차의 랭킹을 Map에 담고 현재 주차의 랭킹차이를 구하고 결과를 조회합니다.
+     * @param yearWeek
+     * @return WeeklyRankingResponse(String, List<StudyRankingResponse>)
+     */
     public WeeklyRankingResponse getStudyDurationRanking(final int yearWeek) {
         // ex) 202440 데이터를 넣는다.
-        List<Object[]> results = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek);
+        List<StudyRanking> currentResults = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek);
         // 202439 데이터를 넣는다. (이전 랭킹과 비교하기 위함)
-        List<Object[]> results2 = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek - 1);
+        List<StudyRanking> previousResults = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek - 1);
 
         Weekly weekly = weeklyRepository.findByWeekNumber(yearWeek)
                 .orElseThrow(() -> new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
 
         // 이전 주차에 랭킹을 department, 순위를 담는다.
-        Map<String, Integer> previousResult = new HashMap<>();
-        for (Object[] result : results2) {
-            previousResult.put((String) result[0], ((Number) result[2]).intValue());
-        }
+        Map<String, Integer> previousResultMap = previousResults.stream()
+                .collect(Collectors.toMap(StudyRanking::getDepartment, StudyRanking::getRanking));
 
-        List<StudyRankingResponse> response = new ArrayList<>();
-        // 현재 results의 순위와, 이전 주차 previousResult.get("department")의 순위를 비교하여 출력한다.
-        for (Object[] result : results) {
-            response.add(
-                    StudyRankingResponse.of(
-                            (String) result[0],
-                            ((Number) result[1]).longValue() / 3600,
-//                            ((Number) result[1]).longValue(),
-                            ((Number) result[2]).intValue(),
-                            previousResult.get((String) result[0])
-                    )
-            );
-        }
+        // 현재 currentResults의 순위와, 이전 주차 previousResultMap.get("department")의 순위를 비교하여 출력한다.
+        List<StudyRankingResponse> response = currentResults.stream()
+                .map(result -> StudyRankingResponse.of(
+                        result.getDepartment(),
+                        result.getSeconds() / 3600,
+                        result.getRanking(),
+                        previousResultMap.get(result.getDepartment())
+                ))
+                .collect(toList());
+
         return WeeklyRankingResponse.of(weekly.getWeekName(), response);
     }
 
