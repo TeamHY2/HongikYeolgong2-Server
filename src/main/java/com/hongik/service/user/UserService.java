@@ -1,5 +1,6 @@
 package com.hongik.service.user;
 
+import com.hongik.discord.MessageService;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.UserCreateRequest;
@@ -23,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtUtil jwtUtil;
+    private final MessageService messageService;
 
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
@@ -63,6 +65,7 @@ public class UserService {
 
         user.join(request.getNickname(), request.getDepartment());
         String accessToken = jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L);
+        messageService.sendMsg(request.getNickname() + "님 회원가입 완료");
         return JoinResponse.of(user, accessToken);
     }
 
