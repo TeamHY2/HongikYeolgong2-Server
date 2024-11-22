@@ -1,5 +1,8 @@
 package com.hongik.domain.study;
 
+import com.hongik.dto.study.response.StudyCount;
+import com.hongik.dto.study.response.StudyCountLocalDate;
+import com.hongik.dto.study.response.StudyRanking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -71,18 +74,28 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
                                         @Param("year") int year,
                                         @Param("month") int month);
 
+    /**
+     * 20xx년 전체 공부 횟수를 조회한다.
+     * 캘린더에 공부 횟수로 색칠한다.
+     */
     @Query(value = "SELECT DATE(s.start_time) AS date, COUNT(*) AS studyCount " +
             "FROM study_session s " +
             "WHERE s.user_id = :userId " +
             "GROUP BY DATE(s.start_time)", nativeQuery = true)
-    List<Object[]> getStudyCountByAll(@Param("userId") Long userId);
+    List<StudyCountLocalDate> getStudyCountByAll(@Param("userId") Long userId);
 
+    /**
+     * 20xx년 x월 x일에 대한 월요일~일요일 공부 횟수를 조회한다.
+     * 홈 화면 일주일 캘린더에 공부 횟수로 색칠한다.
+     * 반환값은 LocalDate, Long
+     * @return StudyCount(LocalDate, Long)
+     */
     @Query(value = "SELECT DATE(s.start_time) AS date, COUNT(*) AS studyCount " +
             "FROM study_session s " +
             "WHERE s.user_id = :userId " +
             "and DATE(s.start_time) in :dates " +
             "GROUP BY DATE(s.start_time)", nativeQuery = true)
-    List<Object[]> getStudyCountByWeek(@Param("userId") Long userId, List<LocalDate> dates);
+    List<StudyCount> getStudyCountByWeek(@Param("userId") Long userId, List<LocalDate> dates);
 
     /**
      * 2024년 10월 01일 기준
@@ -109,5 +122,5 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             "LEFT JOIN study_session s ON u.id = s.user_id " +
             "AND YEARWEEK(s.start_time, 1) = :weekYear " +
             "GROUP BY d.department_name", nativeQuery = true)
-    List<Object[]> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
+    List<StudyRanking> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
 }

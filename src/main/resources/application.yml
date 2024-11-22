@@ -83,3 +83,5 @@ springdoc:
 jwt:
   secret: aaaabbbsdifqbvaesoioegwaaaabbbsdidsfdsfdfsdfsdfsdfsdfsd
 
+discord:
+  url: https://discord.com/api/webhooks/123456781234567812345/zxcvbnmasdfghjklqwertyuiopoiuytrewqlkjhgfdsamnbvcxz

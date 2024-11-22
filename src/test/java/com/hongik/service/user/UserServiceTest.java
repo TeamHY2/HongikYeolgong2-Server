@@ -1,5 +1,6 @@
 package com.hongik.service.user;
 
+import com.hongik.discord.MessageService;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
@@ -24,8 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 
 @SpringBootTest
 class UserServiceTest {
@@ -41,6 +41,9 @@ class UserServiceTest {
 
     @MockBean
     private JwtUtil jwtUtil;
+
+    @MockBean
+    private MessageService messageService;
 
     @AfterEach
     void tearDown() {
@@ -80,6 +83,8 @@ class UserServiceTest {
                 .build();
 
         BDDMockito.given(jwtUtil.createAccessToken(any(), anyLong())).willReturn("ey");
+
+        BDDMockito.given(messageService.sendMsg(anyString())).willReturn(true);
 
         // when
         JoinResponse userResponse = userService.join(request, user.getId());

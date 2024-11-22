@@ -3,6 +3,7 @@ package com.hongik.domain.study;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
+import com.hongik.dto.study.response.StudyCountLocalDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -168,11 +169,11 @@ class StudySessionRepositoryTest {
         studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3, studySession4));
 
         // when
-        List<Object[]> result = studySessionRepository.getStudyCountByAll(user.getId());
+        List<StudyCountLocalDate> result = studySessionRepository.getStudyCountByAll(user.getId());
 
         // then
         assertThat(result).hasSize(3)
-                .extracting(row -> ((java.sql.Date) row[0]).toLocalDate(), row -> (Long) row[1])
+                .extracting("date", "studyCount")
                 .containsExactlyInAnyOrder(
                         tuple(LocalDate.of(2024, 9, 19), 2L),
                         tuple(LocalDate.of(2024, 9, 20), 1L),

@@ -29,3 +29,6 @@ server:
   serverAddress: localhost
 
 serverName: local_server
+
+discord:
+  url: https://discord.com/api/webhooks/123456781234567812345/zxcvbnmasdfghjklqwertyuiopoiuytrewqlkjhgfdsamnbvcxz
