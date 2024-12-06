@@ -63,9 +63,11 @@ public class UserService {
             throw new AppException(ErrorCode.ALREADY_EXIST_NICKNAME, ErrorCode.ALREADY_EXIST_NICKNAME.getMessage());
         }
 
+        // TODO: 리팩토링
+        long userCount = userRepository.count();
         user.join(request.getNickname(), request.getDepartment());
         String accessToken = jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L);
-        messageService.sendMsg(request.getNickname() + "님 회원가입 완료");
+        messageService.sendMsg("[ " + userCount + "번째 유저 가입 ]\n" + "플랫폼: " +user.getSocialPlatform() + "\n" + "닉네임: " + request.getNickname());
         return JoinResponse.of(user, accessToken);
     }
 
