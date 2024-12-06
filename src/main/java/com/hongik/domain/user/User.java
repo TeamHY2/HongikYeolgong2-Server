@@ -34,17 +34,21 @@ public class User extends BaseEntity {
 
     private String sub;
 
+    @Enumerated(EnumType.STRING)
+    private SocialPlatform socialPlatform;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudySession> studySessions = new ArrayList<>();
 
     @Builder
-    public User(final String username, final String password, final String nickname, final String department, final Role role, final String sub) {
+    public User(final String username, final String password, final String nickname, final String department, final Role role, final String sub, final SocialPlatform socialPlatform) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.department = department;
         this.role = role;
         this.sub = sub;
+        this.socialPlatform = socialPlatform;
     }
 
     public void join(final String nickname, final String department) {

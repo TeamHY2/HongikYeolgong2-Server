@@ -1,6 +1,7 @@
 package com.hongik.service.auth;
 
 import com.hongik.domain.user.Role;
+import com.hongik.domain.user.SocialPlatform;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.auth.request.AppleLoginRequest;
@@ -63,6 +64,7 @@ public class AuthService {
                     .username(googleInfoResponse.getEmail())
                     .sub(googleInfoResponse.getSub())
                     .role(Role.GUEST)
+                    .socialPlatform(SocialPlatform.GOOGLE)
                     .build());
         }
 
@@ -92,6 +94,7 @@ public class AuthService {
                         .username(appleInfoResponse.get("email", String.class))
                         .sub(sub)
                         .role(Role.GUEST)
+                        .socialPlatform(SocialPlatform.APPLE)
                         .build());
             } else {
                 log.info("subIsNotEmpty, 기존 회원");
@@ -115,6 +118,7 @@ public class AuthService {
                             .username(appleInfoResponse.get("email", String.class))
                             .sub(sub)
                             .role(Role.GUEST)
+                            .socialPlatform(SocialPlatform.APPLE)
                             .build());
                 } else {
                     log.info("UID값 존재, findBySub 유저가 존재하기 때문에 로그인 처리");
