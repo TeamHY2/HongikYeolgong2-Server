@@ -116,7 +116,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
      */
     @Query(value = "SELECT d.department_name AS department, " +
             "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS seconds, " +
-            "ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) AS ranking " +
+            "RANK() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) AS ranking " +
             "FROM department d " +
             "LEFT JOIN users u ON u.department = d.department_name " +
             "LEFT JOIN study_session s ON u.id = s.user_id " +

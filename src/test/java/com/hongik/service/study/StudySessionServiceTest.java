@@ -6,10 +6,7 @@ import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
-import com.hongik.dto.study.response.StudyCountLocalDateResponse;
-import com.hongik.dto.study.response.StudyCountResponse;
-import com.hongik.dto.study.response.StudyDurationResponse;
-import com.hongik.dto.study.response.StudySessionResponse;
+import com.hongik.dto.study.response.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -185,7 +182,7 @@ class StudySessionServiceTest {
                 );
     }
 
-//    @DisplayName("원하는 날짜에 대한 랭킹을 조회한다. ex) 9월 2주차")
+//    @DisplayName("원하는 날짜에 대한 랭킹을 조회한다. ex) 9월 3주차 YearWeek = 202438")
 //    @Test
 //    void getStudyDurationRanking() {
 //        // given
@@ -199,21 +196,18 @@ class StudySessionServiceTest {
 //        LocalDate today = LocalDate.of(2024, 9, 16);
 //
 //        LocalDateTime startTime1 = LocalDateTime.of(2024, 9, 19, 10, 10);
-//        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 10);
+//        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 12, 10);
 //        LocalDateTime startTime2 = LocalDateTime.of(2024, 9, 19, 20, 10);
 //        LocalDateTime endTime2 = LocalDateTime.of(2024, 9, 19, 21, 10);
-//        LocalDateTime startTime3 = LocalDateTime.of(2024, 9, 20, 20, 10);
-//        LocalDateTime endTime3 = LocalDateTime.of(2024, 9, 20, 21, 10);
-//        StudySession studySession1 = createStudySession(user, startTime1, endTime1);
-//        StudySession studySession2 = createStudySession(user, startTime2, endTime2);
-//        StudySession studySession3 = createStudySession(user, startTime3, endTime3);
-//        studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
+//        StudySession studySession1 = createStudySession(user1, startTime1, endTime1);
+//        StudySession studySession2 = createStudySession(user2, startTime2, endTime2);
+//        studySessionRepository.saveAll(List.of(studySession1, studySession2));
 //
 //        // when
-//        List<StudyCountResponse> result = studySessionService.getStudyCountOfWeek(today, user.getId());
+//        WeeklyRankingResponse result = studySessionService.getStudyDurationRanking(202438);
 //
 //        // then
-//        assertThat(result).hasSize(7)
+//        assertThat(result)
 //                .extracting("date", "studyCount")
 //                .containsExactly(
 //                        tuple(LocalDate.of(2024, 9, 16), 0L),
