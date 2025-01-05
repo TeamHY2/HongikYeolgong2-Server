@@ -4,10 +4,7 @@ import com.hongik.discord.MessageService;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
-import com.hongik.dto.user.request.NicknameRequest;
-import com.hongik.dto.user.request.UserCreateRequest;
-import com.hongik.dto.user.request.UserJoinRequest;
-import com.hongik.dto.user.request.UsernameRequest;
+import com.hongik.dto.user.request.*;
 import com.hongik.dto.user.response.JoinResponse;
 import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
@@ -175,6 +172,28 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.checkUsernameDuplication(request.getUsername()))
                 .isInstanceOf(AppException.class)
                 .hasMessage("이미 존재하는 이메일입니다.");
+    }
+
+    @DisplayName("프로필(닉네임, 학과)을 수정한다.")
+    @Test
+    void updateProfile() {
+        // given
+        User user = createUser("user@email.com", "password", "nickname");
+        userRepository.save(user);
+
+        UserProfileRequest request = UserProfileRequest.builder()
+                .nickname("수정된닉네임")
+                .department("수정된학과")
+                .build();
+
+        // when
+        UserResponse userResponse = userService.updateProfile(request, user.getId());
+
+        // then
+        assertThat(userResponse.getId()).isNotNull();
+        assertThat(userResponse)
+                .extracting("username", "nickname", "department")
+                .containsExactlyInAnyOrder("user@email.com", "수정된닉네임", "수정된학과");
     }
 
     private User createUser(final String username, final String password, final String nickname) {
