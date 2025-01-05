@@ -1,10 +1,7 @@
 package com.hongik.controller.user;
 
 import com.hongik.dto.ApiResponse;
-import com.hongik.dto.user.request.NicknameRequest;
-import com.hongik.dto.user.request.UserCreateRequest;
-import com.hongik.dto.user.request.UserJoinRequest;
-import com.hongik.dto.user.request.UsernameRequest;
+import com.hongik.dto.user.request.*;
 import com.hongik.dto.user.response.JoinResponse;
 import com.hongik.dto.user.response.NicknameResponse;
 import com.hongik.dto.user.response.UserResponse;
@@ -71,5 +68,14 @@ public class UserController {
     public ApiResponse<UserResponse> getUserInfo(Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(userService.getUserInfo(userId));
+    }
+
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+    @Operation(summary = "프로필 수정(학과, 닉네임)", description = "닉네임과 학과를 수정합니다.")
+    @PutMapping
+    public ApiResponse<UserResponse> updateProfile(@Valid @RequestBody UserProfileRequest request,
+                                                   Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        return ApiResponse.ok(userService.updateProfile(request, userId));
     }
 }
