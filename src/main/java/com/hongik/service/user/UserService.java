@@ -1,5 +1,6 @@
 package com.hongik.service.user;
 
+import com.hongik.discord.MessageEvent;
 import com.hongik.discord.MessageService;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
@@ -14,6 +15,7 @@ import com.hongik.exception.ErrorCode;
 import com.hongik.jwt.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtUtil jwtUtil;
-    private final MessageService messageService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
@@ -64,11 +66,10 @@ public class UserService {
             throw new AppException(ErrorCode.ALREADY_EXIST_NICKNAME, ErrorCode.ALREADY_EXIST_NICKNAME.getMessage());
         }
 
-        // TODO: 리팩토링
         long userCount = userRepository.count();
         user.join(request.getNickname(), request.getDepartment());
         String accessToken = jwtUtil.createAccessToken(user, 24 * 60 * 60 * 1000 * 365L);
-        messageService.sendMsg("[ " + userCount + "번째 유저 가입 ]\n" + "플랫폼: " +user.getSocialPlatform() + "\n" + "닉네임: " + request.getNickname());
+        eventPublisher.publishEvent(new MessageEvent(this, "[ " + userCount + "번째 유저 가입 ]\n" + "플랫폼: " + user.getSocialPlatform() + "\n" + "닉네임: " + request.getNickname()));
         return JoinResponse.of(user, accessToken);
     }
 

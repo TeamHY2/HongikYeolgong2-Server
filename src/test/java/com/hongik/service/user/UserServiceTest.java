@@ -1,5 +1,6 @@
 package com.hongik.service.user;
 
+import com.hongik.discord.MessageEvent;
 import com.hongik.discord.MessageService;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
@@ -14,15 +15,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.event.ApplicationEvents;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class UserServiceTest {
@@ -38,9 +44,6 @@ class UserServiceTest {
 
     @MockBean
     private JwtUtil jwtUtil;
-
-    @MockBean
-    private MessageService messageService;
 
     @AfterEach
     void tearDown() {
@@ -80,8 +83,6 @@ class UserServiceTest {
                 .build();
 
         BDDMockito.given(jwtUtil.createAccessToken(any(), anyLong())).willReturn("ey");
-
-        BDDMockito.given(messageService.sendMsg(anyString())).willReturn(true);
 
         // when
         JoinResponse userResponse = userService.join(request, user.getId());
