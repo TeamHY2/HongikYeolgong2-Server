@@ -1,10 +1,7 @@
 package com.hongik.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hongik.dto.user.request.NicknameRequest;
-import com.hongik.dto.user.request.UserCreateRequest;
-import com.hongik.dto.user.request.UserJoinRequest;
-import com.hongik.dto.user.request.UsernameRequest;
+import com.hongik.dto.user.request.*;
 import com.hongik.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -332,6 +328,50 @@ class UserControllerTest {
         // when // then
         mockMvc.perform(
                         post("/api/v1/user/join").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("학과는 필수입니다."));
+    }
+
+    @DisplayName("프로필을 수정할 때 닉네임은 필수값이다.")
+    @Test
+    void updateProfileWithoutNickname() throws Exception {
+        // given
+        UserProfileRequest request = UserProfileRequest.builder()
+//                .nickname("nickname")
+                .department("department")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        put("/api/v1/user").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("닉네임은 필수입니다."));
+    }
+
+    @DisplayName("프로필을 수정할 때 학과는 필수값이다.")
+    @Test
+    void updateProfileWithoutDepartment() throws Exception {
+        // given
+        UserProfileRequest request = UserProfileRequest.builder()
+                .nickname("nickname")
+//                .department("department")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        put("/api/v1/user").with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )

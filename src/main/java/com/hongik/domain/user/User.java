@@ -60,4 +60,9 @@ public class User extends BaseEntity {
     public void updateSub(final String sub) {
         this.sub = sub;
     }
+
+    public void updateProfile(final String nickname, final String department) {
+        this.nickname = nickname;
+        this.department = department;
+    }
 }
