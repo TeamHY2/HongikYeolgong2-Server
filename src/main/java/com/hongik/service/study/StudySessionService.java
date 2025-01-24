@@ -169,12 +169,23 @@ public class StudySessionService {
 
         // 현재 currentResults의 순위와, 이전 주차 previousResultMap.get("department")의 순위를 비교하여 출력한다.
         List<StudyRankingResponse> response = currentResults.stream()
-                .map(result -> StudyRankingResponse.of(
-                        result.getDepartment(),
-                        result.getSeconds() / 3600,
-                        result.getRanking(),
-                        previousResultMap.get(result.getDepartment())
-                ))
+                .map(result -> {
+                    long hours = result.getSeconds() / 3600; // 시간을 계산
+                    if (hours < 1) {
+                        return StudyRankingResponse.of(
+                                result.getDepartment(),
+                                hours,
+                                0, // 랭킹을 0으로 설정
+                                0  // 이전 랭킹도 0으로 설정 (비교하지 않음)
+                        );
+                    }
+                    return StudyRankingResponse.of(
+                            result.getDepartment(),
+                            hours,
+                            result.getRanking(),
+                            previousResultMap.get(result.getDepartment()) // 이전 랭킹 값
+                    );
+                })
                 .collect(toList());
 
         return WeeklyRankingResponse.of(weekly.getWeekName(), response);
