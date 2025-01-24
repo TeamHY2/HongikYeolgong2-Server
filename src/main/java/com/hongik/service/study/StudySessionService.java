@@ -150,10 +150,15 @@ public class StudySessionService {
      * @return WeeklyRankingResponse(String, List<StudyRankingResponse>)
      */
     public WeeklyRankingResponse getStudyDurationRanking(final int yearWeek) {
+
+        LocalDate now = weeklyRepository.yearWeekToDate(yearWeek);
+
         // ex) 202440 데이터를 넣는다.
-        List<StudyRanking> currentResults = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek);
+        List<StudyRanking> currentResults =
+                studySessionRepository.getWeeklyStudyTimeRankingByDepartment(now, now.plusDays(7));
         // 202439 데이터를 넣는다. (이전 랭킹과 비교하기 위함)
-        List<StudyRanking> previousResults = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek - 1);
+        List<StudyRanking> previousResults =
+                studySessionRepository.getWeeklyStudyTimeRankingByDepartment(now.minusDays(7), now);
 
         Weekly weekly = weeklyRepository.findByWeekNumber(yearWeek)
                 .orElseThrow(() -> new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
