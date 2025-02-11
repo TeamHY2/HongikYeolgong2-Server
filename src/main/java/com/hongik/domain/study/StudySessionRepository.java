@@ -116,11 +116,12 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
      */
     @Query(value = "SELECT d.department_name AS department, " +
             "COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) AS seconds, " +
-            "RANK() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) AS ranking " +
+            "DENSE_RANK() OVER (ORDER BY COALESCE(SUM(TIMESTAMPDIFF(SECOND, s.start_time, s.end_time)), 0) DESC) AS ranking " +
             "FROM department d " +
             "LEFT JOIN users u ON u.department = d.department_name " +
-            "LEFT JOIN study_session s ON u.id = s.user_id " +
-            "AND YEARWEEK(s.start_time, 1) = :weekYear " +
+            "LEFT JOIN study_session s use index (idx_study_session_starttime) ON u.id = s.user_id " +
+            "AND s.start_time >= :startDate AND s.start_time < :endDate " +
             "GROUP BY d.department_name", nativeQuery = true)
-    List<StudyRanking> getWeeklyStudyTimeRankingByDepartment(@Param("weekYear") int weekYear);
+    List<StudyRanking> getWeeklyStudyTimeRankingByDepartment(@Param("startDate") LocalDate startDate,
+                                                             @Param("endDate") LocalDate endDate);
 }

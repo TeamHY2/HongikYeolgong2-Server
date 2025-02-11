@@ -150,10 +150,15 @@ public class StudySessionService {
      * @return WeeklyRankingResponse(String, List<StudyRankingResponse>)
      */
     public WeeklyRankingResponse getStudyDurationRanking(final int yearWeek) {
+
+        LocalDate now = weeklyRepository.yearWeekToDate(yearWeek);
+
         // ex) 202440 데이터를 넣는다.
-        List<StudyRanking> currentResults = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek);
+        List<StudyRanking> currentResults =
+                studySessionRepository.getWeeklyStudyTimeRankingByDepartment(now, now.plusDays(7));
         // 202439 데이터를 넣는다. (이전 랭킹과 비교하기 위함)
-        List<StudyRanking> previousResults = studySessionRepository.getWeeklyStudyTimeRankingByDepartment(yearWeek - 1);
+        List<StudyRanking> previousResults =
+                studySessionRepository.getWeeklyStudyTimeRankingByDepartment(now.minusDays(7), now);
 
         Weekly weekly = weeklyRepository.findByWeekNumber(yearWeek)
                 .orElseThrow(() -> new AppException(ErrorCode.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
@@ -164,12 +169,23 @@ public class StudySessionService {
 
         // 현재 currentResults의 순위와, 이전 주차 previousResultMap.get("department")의 순위를 비교하여 출력한다.
         List<StudyRankingResponse> response = currentResults.stream()
-                .map(result -> StudyRankingResponse.of(
-                        result.getDepartment(),
-                        result.getSeconds() / 3600,
-                        result.getRanking(),
-                        previousResultMap.get(result.getDepartment())
-                ))
+                .map(result -> {
+                    long hours = result.getSeconds() / 3600; // 시간을 계산
+                    if (hours < 1) {
+                        return StudyRankingResponse.of(
+                                result.getDepartment(),
+                                hours,
+                                0, // 랭킹을 0으로 설정
+                                0  // 이전 랭킹도 0으로 설정 (비교하지 않음)
+                        );
+                    }
+                    return StudyRankingResponse.of(
+                            result.getDepartment(),
+                            hours,
+                            result.getRanking(),
+                            previousResultMap.get(result.getDepartment()) // 이전 랭킹 값
+                    );
+                })
                 .collect(toList());
 
         return WeeklyRankingResponse.of(weekly.getWeekName(), response);
