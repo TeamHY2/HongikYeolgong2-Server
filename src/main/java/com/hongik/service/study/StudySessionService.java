@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -43,15 +42,13 @@ public class StudySessionService {
         return StudySessionResponse.of(savedStudySession);
     }
 
-    public StudyDurationResponse getStudyDuration(final LocalDate now, final Long userId) {
+    public StudyDurationResponse getStudyDuration(final LocalDate date, final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
-        final int year = now.getYear();
-        final int month = now.getMonthValue();
-        final int day = now.getDayOfMonth();
-
-        String currentSemester = getCurrentSemester(month);
+        final int year = date.getYear();
+        final int month = date.getMonthValue();
+        final int day = date.getDayOfMonth();
 
         Long studyDurationWithYear = studySessionRepository.getStudyDurationForYearAsSeconds(userId, year);
         Long yearHours = studyDurationWithYear / 3600;
@@ -65,11 +62,7 @@ public class StudySessionService {
         Long dayHours = studyDurationWithDay / 3600;
         Long dayMinutes = studyDurationWithDay % 3600 / 60;
 
-        Long studyDurationWithSemester = studySessionRepository.getStudyDurationForSemesterAsSeconds(userId, year, currentSemester);
-        Long semesterHours = studyDurationWithSemester / 3600;
-        Long semesterMinutes = studyDurationWithSemester % 3600 / 60;
-
-        return StudyDurationResponse.of(yearHours, yearMinutes, monthHours, monthMinutes, dayHours, dayMinutes, semesterHours, semesterMinutes);
+        return StudyDurationResponse.of(yearHours, yearMinutes, monthHours, monthMinutes, dayHours, dayMinutes);
     }
 
     public List<StudyCountLocalDateResponse> getStudyCount(final int year, final int month, final Long userId) {

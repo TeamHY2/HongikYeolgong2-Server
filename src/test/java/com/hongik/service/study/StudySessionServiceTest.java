@@ -60,12 +60,11 @@ class StudySessionServiceTest {
                 .containsExactlyInAnyOrder(now, now.plusMinutes(5));
     }
     
-    @DisplayName("서버 시간 기준으로 유저의 날짜(Year, Month, Day, Semester)에 대한 공부 시간 조회")
+    @DisplayName("Param 값이 없을 때, 서버 시간 기준으로 유저의 날짜(Year, Month, Day)에 대한 공부 시간 조회")
     @Test
     void getStudyDuration() {
         // given
         LocalDate now = LocalDate.of(2024, 9, 20);
-        // 9월은 2학기다.
         User user = createUser("username", "password", "nickname", "디자인학부");
         userRepository.save(user);
 
@@ -73,7 +72,6 @@ class StudySessionServiceTest {
         2024년 - 3시간 3분
         2024년 9월 - 3시간 3분
         2024년 9월 19일 - 2시간 2분, 2024년 9월 20일 - 1시간 1분
-        학기(second) - 3시간 3분
          */
         LocalDateTime startTime1 = LocalDateTime.of(2024, 9, 19, 10, 10);
         LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 11);
@@ -106,10 +104,52 @@ class StudySessionServiceTest {
                 .containsExactly(
                         1L, 1L
                 );
+    }
+
+    @DisplayName("Param 값이 있을 때, 날짜(Year, Month, Day)에 대한 공부 시간 조회")
+    @Test
+    void getStudyDurationWithLocalDate() {
+        // given
+        LocalDate date = LocalDate.of(2024, 8, 20);
+        User user = createUser("username", "password", "nickname", "디자인학부");
+        userRepository.save(user);
+
+        /*
+        2024년 - 3시간 3분
+        2024년 8월 - 2시간 2분
+        2024년 8월 19일 - 1시간 1분
+        2024년 8월 20일 - 1시간 1분
+         */
+        LocalDateTime startTime1 = LocalDateTime.of(2024, 9, 19, 10, 10);
+        LocalDateTime endTime1 = LocalDateTime.of(2024, 9, 19, 11, 11);
+        LocalDateTime startTime2 = LocalDateTime.of(2024, 8, 19, 20, 10);
+        LocalDateTime endTime2 = LocalDateTime.of(2024, 8, 19, 21, 11);
+        LocalDateTime startTime3 = LocalDateTime.of(2024, 8, 20, 20, 10);
+        LocalDateTime endTime3 = LocalDateTime.of(2024, 8, 20, 21, 11);
+        StudySession studySession1 = createStudySession(user, startTime1, endTime1);
+        StudySession studySession2 = createStudySession(user, startTime2, endTime2);
+        StudySession studySession3 = createStudySession(user, startTime3, endTime3);
+        studySessionRepository.saveAll(List.of(studySession1, studySession2, studySession3));
+
+        // when
+        StudyDurationResponse studyDurationResponse = studySessionService.getStudyDuration(date, user.getId());
+
+        // then
+        assertThat(studyDurationResponse).isNotNull();
         assertThat(studyDurationResponse)
-                .extracting("semesterHours", "semesterMinutes")
+                .extracting("yearHours", "yearMinutes")
                 .containsExactly(
                         3L, 3L
+                );
+        assertThat(studyDurationResponse)
+                .extracting("monthHours", "monthMinutes")
+                .containsExactly(
+                        2L, 2L
+                );
+        assertThat(studyDurationResponse)
+                .extracting("dayHours", "dayMinutes")
+                .containsExactly(
+                        1L, 1L
                 );
     }
 

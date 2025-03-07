@@ -36,12 +36,15 @@ public class StudySessionController {
     }
 
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
-    @Operation(summary = "(기록 화면 캘린더 공부 횟수와 함께 표시) 연간, 월간, 투데이, 학기 공부 시간 조회", description = "서버 기준 현재 시간을 기준으로 날짜를 정합니다. <br> Minute을 제공합니다.")
+    @Operation(summary = "(기록 화면 캘린더 공부 횟수와 함께 표시) 연간, 월간, 투데이 공부 시간 조회", description = "Param값이 없으면 서버 기준 현재 시간을 기준으로 날짜를 정합니다. <br> Minute을 제공합니다.")
     @GetMapping("/duration")
-    public ApiResponse<StudyDurationResponse> getStudyDuration(Authentication authentication) {
+    public ApiResponse<StudyDurationResponse> getStudyDuration(Authentication authentication,
+                                                               @RequestParam(required = false) LocalDate date) {
         Long userId = Long.parseLong(authentication.getName());
-        LocalDate now = LocalDate.now();
-        return ApiResponse.ok(studySessionService.getStudyDuration(now, userId));
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        return ApiResponse.ok(studySessionService.getStudyDuration(date, userId));
     }
 
     @Hidden
@@ -88,4 +91,5 @@ public class StudySessionController {
 
         return ApiResponse.ok(studySessionService.getStudyDurationRanking(yearWeek));
     }
+
 }
