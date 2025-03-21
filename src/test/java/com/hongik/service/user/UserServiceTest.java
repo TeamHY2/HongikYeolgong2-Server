@@ -8,6 +8,7 @@ import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.*;
 import com.hongik.dto.user.response.JoinResponse;
 import com.hongik.dto.user.response.NicknameResponse;
+import com.hongik.dto.user.response.UserDeviceTokenResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
 import com.hongik.jwt.JwtUtil;
@@ -237,6 +238,27 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.updateProfile(request, me.getId()))
                 .isInstanceOf(AppException.class)
                 .hasMessage("이미 존재하는 닉네임입니다.");
+    }
+
+    @DisplayName("디바이스 토큰을 추가한다.")
+    @Test
+    void updateDeviceToken() {
+        // given
+        User user = createUser("user@email.com", "password", "nickname");
+        userRepository.save(user);
+
+        UserDeviceTokenRequest request = UserDeviceTokenRequest.builder()
+                .deviceToken("deviceToken")
+                .build();
+
+        // when
+        UserDeviceTokenResponse response = userService.updateDeviceToken(request, user.getId());
+
+        // then
+        assertThat(response.getId()).isNotNull();
+        assertThat(response)
+                .extracting("id", "username", "nickname", "deviceToken")
+                .containsExactlyInAnyOrder(user.getId(), "user@email.com", "nickname", request.getDeviceToken());
     }
 
     private User createUser(final String username, final String password, final String nickname) {
