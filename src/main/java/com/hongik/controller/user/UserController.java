@@ -86,7 +86,7 @@ public class UserController {
         return ApiResponse.ok(userService.updateDeviceToken(request, userId));
     }
 
-    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "디바이스 토큰 존재 여부 확인", description = "유저의 디바이스 토큰이 존재하는지 확인합니다.")
     @GetMapping("/device-token")
     public ApiResponse<DeviceTokenResponse> getDeviceToken(Authentication authentication) {
