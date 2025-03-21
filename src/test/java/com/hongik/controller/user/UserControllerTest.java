@@ -420,4 +420,16 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("디바이스 토큰은 필수입니다."));
     }
+
+    @DisplayName("디바이스 토큰을 조회한다.")
+    @Test
+    void getDeviceToken() throws Exception {
+        // when // then
+        mockMvc.perform(
+                        get("/api/v1/user/device-token").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
