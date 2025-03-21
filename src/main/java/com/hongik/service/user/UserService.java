@@ -5,10 +5,12 @@ import com.hongik.discord.MessageService;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.UserCreateRequest;
+import com.hongik.dto.user.request.UserDeviceTokenRequest;
 import com.hongik.dto.user.request.UserJoinRequest;
 import com.hongik.dto.user.request.UserProfileRequest;
 import com.hongik.dto.user.response.JoinResponse;
 import com.hongik.dto.user.response.NicknameResponse;
+import com.hongik.dto.user.response.UserDeviceTokenResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
@@ -96,6 +98,16 @@ public class UserService {
         user.updateProfile(request.getNickname(), request.getDepartment());
 
         return UserResponse.of(user);
+    }
+
+    @Transactional
+    public UserDeviceTokenResponse updateDeviceToken(UserDeviceTokenRequest request, final Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
+
+        user.updateDeviceToken(request.getDeviceToken());
+
+        return UserDeviceTokenResponse.of(user);
     }
 
     /**

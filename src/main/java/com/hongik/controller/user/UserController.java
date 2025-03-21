@@ -4,6 +4,7 @@ import com.hongik.dto.ApiResponse;
 import com.hongik.dto.user.request.*;
 import com.hongik.dto.user.response.JoinResponse;
 import com.hongik.dto.user.response.NicknameResponse;
+import com.hongik.dto.user.response.UserDeviceTokenResponse;
 import com.hongik.dto.user.response.UserResponse;
 import com.hongik.service.user.UserService;
 import com.hongik.swagger.ApiErrorCodeExamples;
@@ -77,5 +78,14 @@ public class UserController {
                                                    Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(userService.updateProfile(request, userId));
+    }
+
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+    @Operation(summary = "디바이스 토큰 추가", description = "유저의 디바이스 토큰을 추가합니다.")
+    @PutMapping("/device-token")
+    public ApiResponse<UserDeviceTokenResponse> updateDeviceToken(@Valid @RequestBody UserDeviceTokenRequest request,
+                                                                  Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        return ApiResponse.ok(userService.updateDeviceToken(request, userId));
     }
 }
