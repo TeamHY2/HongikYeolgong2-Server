@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
-    @Operation(summary = "디바이스 토큰 추가", description = "유저의 디바이스 토큰을 추가합니다.")
+    @Operation(summary = "디바이스 토큰 추가", description = "유저의 디바이스 토큰을 조회하여 값이 없거나 다른 경우 갱신합니다.")
     @PutMapping("/device-token")
     public ApiResponse<UserDeviceTokenResponse> updateDeviceToken(@Valid @RequestBody UserDeviceTokenRequest request,
                                                                   Authentication authentication) {
