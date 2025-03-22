@@ -97,12 +97,21 @@ public class UserService {
         return UserResponse.of(user);
     }
 
+    /**
+     * 앱을 실행했을 때, 토큰값을 확인한다.
+     * 토큰이 존재하지 않거나(null), 현재 기기랑 다르면 새로운 값으로 갱신한다.
+     */
     @Transactional
     public UserDeviceTokenResponse updateDeviceToken(UserDeviceTokenRequest request, final Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
-        user.updateDeviceToken(request.getDeviceToken());
+        // 유저의 토큰 값과 기기 토큰 값이 다르면 새로운 값으로 갱신한다.
+        // 1. user의 deviceToken이 null인 경우
+        // 2. 현재 접속한 기기와 다른 경우
+        if (user.getDeviceToken() == null || !user.getDeviceToken().equals(request.getDeviceToken())) {
+            user.updateDeviceToken(request.getDeviceToken());
+        }
 
         return UserDeviceTokenResponse.of(user);
     }

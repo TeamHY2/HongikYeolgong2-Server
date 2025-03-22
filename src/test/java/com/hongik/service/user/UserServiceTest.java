@@ -237,9 +237,9 @@ class UserServiceTest {
                 .hasMessage("이미 존재하는 닉네임입니다.");
     }
 
-    @DisplayName("디바이스 토큰을 추가한다.")
+    @DisplayName("디바이스 토큰을 추가한다. 토큰값이 존재하지 않는 경우 (null)")
     @Test
-    void updateDeviceToken() {
+    void updateDeviceTokenWithoutUserDeviceToken() {
         // given
         User user = createUser("user@email.com", "password", "nickname");
         userRepository.save(user);
@@ -256,6 +256,25 @@ class UserServiceTest {
         assertThat(response)
                 .extracting("id", "username", "nickname", "deviceToken")
                 .containsExactlyInAnyOrder(user.getId(), "user@email.com", "nickname", request.getDeviceToken());
+    }
+
+    @DisplayName("디바이스 토큰을 추가한다. 토큰값이 현재 기기와 다른 경우")
+    @Test
+    void updateDeviceTokenWhenUserDeviceTokenNotEqualsRequestDeviceToken() {
+        // given
+        User user = createUserWithDeviceToken("deviceToken");
+        userRepository.save(user);
+
+        UserDeviceTokenRequest request = UserDeviceTokenRequest.builder()
+                .deviceToken("NewDeviceToken")
+                .build();
+
+        // when
+        UserDeviceTokenResponse response = userService.updateDeviceToken(request, user.getId());
+
+        // then
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getDeviceToken()).isEqualTo("NewDeviceToken");
     }
 
     @DisplayName("디바이스 토큰을 조회한다. (토큰 존재하는 상태)")
@@ -307,6 +326,9 @@ class UserServiceTest {
 
     private User createUserWithDeviceToken(final String deviceToken) {
         return User.builder()
+//                .username("user@email.com")
+//                .password("password")
+//                .nickname("nickname")
                 .deviceToken(deviceToken)
                 .build();
     }
