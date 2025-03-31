@@ -2,9 +2,7 @@ package com.hongik.controller.user;
 
 import com.hongik.dto.ApiResponse;
 import com.hongik.dto.user.request.*;
-import com.hongik.dto.user.response.JoinResponse;
-import com.hongik.dto.user.response.NicknameResponse;
-import com.hongik.dto.user.response.UserResponse;
+import com.hongik.dto.user.response.*;
 import com.hongik.service.user.UserService;
 import com.hongik.swagger.ApiErrorCodeExamples;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -77,5 +75,22 @@ public class UserController {
                                                    Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(userService.updateProfile(request, userId));
+    }
+
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+    @Operation(summary = "디바이스 토큰 추가", description = "유저의 디바이스 토큰을 조회하여 값이 없거나 다른 경우 갱신합니다.")
+    @PutMapping("/device-token")
+    public ApiResponse<UserDeviceTokenResponse> updateDeviceToken(@Valid @RequestBody UserDeviceTokenRequest request,
+                                                                  Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        return ApiResponse.ok(userService.updateDeviceToken(request, userId));
+    }
+
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+    @Operation(summary = "디바이스 토큰 존재 여부 확인", description = "유저의 디바이스 토큰이 존재하는지 확인합니다.")
+    @GetMapping("/device-token")
+    public ApiResponse<DeviceTokenResponse> getDeviceToken(Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        return ApiResponse.ok(userService.getDeviceToken(userId));
     }
 }

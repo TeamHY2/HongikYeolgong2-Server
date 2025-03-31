@@ -381,4 +381,55 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("학과는 필수입니다."));
     }
+
+    @DisplayName("디바이스 토큰을 추가한다.")
+    @Test
+    void updateDeviceToken() throws Exception {
+        // given
+        UserDeviceTokenRequest request = UserDeviceTokenRequest.builder()
+                .deviceToken("deviceToken")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        put("/api/v1/user/device-token").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("디바이스 토큰을 추가할 때, 디바이스 토큰 값은 필수다.")
+    @Test
+    void updateDeviceTokenWithoutDeviceToken() throws Exception {
+        // given
+        UserDeviceTokenRequest request = UserDeviceTokenRequest.builder()
+//                .deviceToken("deviceToken")
+                .build();
+
+        // when // then
+        mockMvc.perform(
+                        put("/api/v1/user/device-token").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("디바이스 토큰은 필수입니다."));
+    }
+
+    @DisplayName("디바이스 토큰을 조회한다.")
+    @Test
+    void getDeviceToken() throws Exception {
+        // when // then
+        mockMvc.perform(
+                        get("/api/v1/user/device-token").with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
