@@ -2,6 +2,7 @@ package com.hongik.controller.study;
 
 import com.hongik.dto.ApiResponse;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
+import com.hongik.dto.study.request.StudySessionCreateRequest2;
 import com.hongik.dto.study.response.*;
 import com.hongik.service.study.StudySessionService;
 import com.hongik.swagger.ApiErrorCodeExamples;
@@ -25,6 +26,15 @@ import static com.hongik.exception.ErrorCode.*;
 public class StudySessionController {
 
     private final StudySessionService studySessionService;
+
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+    @Operation(summary = "열람실 이용 시작", description = "열람실 이용을 시작합니다. 시작 시간을 요청값에 담아주세요.")
+    @PostMapping("/start")
+    public ApiResponse<StudySessionStartResponse> createStudy2(@Valid @RequestBody StudySessionCreateRequest2 request,
+                                                         Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        return ApiResponse.ok(studySessionService.createStudy2(request, userId));
+    }
 
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "열람실 이용 종료", description = "열람실 이용을 종료합니다. 시작 시간과 종료 시간을 요청값에 담아주세요.")

@@ -7,6 +7,7 @@ import com.hongik.domain.user.UserRepository;
 import com.hongik.domain.weekly.Weekly;
 import com.hongik.domain.weekly.WeeklyRepository;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
+import com.hongik.dto.study.request.StudySessionCreateRequest2;
 import com.hongik.dto.study.response.*;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
@@ -31,6 +32,16 @@ public class StudySessionService {
     private final UserRepository userRepository;
 
     private final WeeklyRepository weeklyRepository;
+
+    @Transactional
+    public StudySessionStartResponse createStudy2(StudySessionCreateRequest2 request, final Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
+
+        StudySession savedStudySession = studySessionRepository.save(request.toEntity(user, true));
+
+        return StudySessionStartResponse.of(savedStudySession);
+    }
 
     @Transactional
     public StudySessionResponse createStudy(StudySessionCreateRequest request, final Long userId) {
