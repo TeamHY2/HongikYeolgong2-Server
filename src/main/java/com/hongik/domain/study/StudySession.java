@@ -36,4 +36,9 @@ public class StudySession extends BaseEntity {
         this.endTime = endTime;
         this.studyStatus = studyStatus;
     }
+
+    public void updateStudy(final LocalDateTime endTime, final boolean studyStatus) {
+        this.endTime = endTime;
+        this.studyStatus = studyStatus;
+    }
 }

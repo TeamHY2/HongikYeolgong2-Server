@@ -24,7 +24,10 @@ public enum ErrorCode {
     INVALID_EXPIRATION_JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "기간이 만료된 토큰입니다."),
 
     // WeekField
-    ALREADY_EXIST_WEEK(HttpStatus.CONFLICT, "이미 존재하는 연도에 주차데이터입니다.");
+    ALREADY_EXIST_WEEK(HttpStatus.CONFLICT, "이미 존재하는 연도에 주차데이터입니다."),
+
+    // StudySession
+    NOT_FOUND_STUDY_SESSION(HttpStatus.NOT_FOUND, "존재하지 않는 스터디 세션입니다.");
 
     private final HttpStatus status;
 
