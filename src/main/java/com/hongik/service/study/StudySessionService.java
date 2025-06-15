@@ -12,6 +12,8 @@ import com.hongik.dto.study.request.StudySessionCreateRequest2;
 import com.hongik.dto.study.response.*;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,34 @@ public class StudySessionService {
 		studySession.updateStudy(request.getEndTime(), false);
 
 		return EndStudySessionResponse.of(studySession);
+	}
+
+	public List<StudyingUserResponse> getStudyingUsers() {
+		LocalDate today = LocalDate.now();
+		LocalDateTime startOfDay = today.atStartOfDay();
+		LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+
+		List<UserStudyDuration> results = studySessionRepository.getUserStudyDurationForDayAsSeconds(
+				startOfDay,
+				endOfDay);
+
+		return results.stream()
+				.map(result -> {
+					int totalSeconds = result.getTotalSeconds();
+					int hours = totalSeconds / 3600;
+					int minutes = (totalSeconds % 3600) / 60;
+					int seconds = totalSeconds % 60;
+
+					boolean studyStatus = result.getStudyStatus() == 1;
+
+					return StudyingUserResponse.of(
+							result.getUserId(),
+							result.getUserName(),
+							LocalTime.of(hours, minutes, seconds),
+							studyStatus
+					);
+				})
+				.collect(Collectors.toList());
 	}
 
 	@Transactional
