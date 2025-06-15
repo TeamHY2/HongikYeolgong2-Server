@@ -44,6 +44,13 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.updateStudy(request));
     }
 
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE})
+    @Operation(summary = "열람실 이용 중인 회원 조회", description = "열람실 이용 중인 회원을 조회합니다.")
+    @GetMapping
+    public ApiResponse<List<StudyingUserResponse>> getStudyingUsers() {
+        return ApiResponse.ok(studySessionService.getStudyingUsers());
+    }
+
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "열람실 이용 종료", description = "열람실 이용을 종료합니다. 시작 시간과 종료 시간을 요청값에 담아주세요.")
     @PostMapping
