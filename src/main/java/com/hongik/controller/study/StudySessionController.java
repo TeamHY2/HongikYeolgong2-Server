@@ -1,6 +1,7 @@
 package com.hongik.controller.study;
 
 import com.hongik.dto.ApiResponse;
+import com.hongik.dto.study.request.EndStudySessionRequest;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
 import com.hongik.dto.study.request.StudySessionCreateRequest2;
 import com.hongik.dto.study.response.*;
@@ -34,6 +35,13 @@ public class StudySessionController {
                                                          Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(studySessionService.createStudy2(request, userId));
+    }
+
+    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_STUDY_SESSION})
+    @Operation(summary = "열람실 이용 종료", description = "열람실 이용을 종료합니다. 종료 시간을 요청값에 담아주세요.")
+    @PatchMapping("/end")
+    public ApiResponse<EndStudySessionResponse> updateStudy(@Valid @RequestBody EndStudySessionRequest request) {
+        return ApiResponse.ok(studySessionService.updateStudy(request));
     }
 
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
