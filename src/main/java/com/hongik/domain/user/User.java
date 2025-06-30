@@ -40,8 +40,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudySession> studySessions = new ArrayList<>();
 
+    private String deviceToken;
+
     @Builder
-    public User(final String username, final String password, final String nickname, final String department, final Role role, final String sub, final SocialPlatform socialPlatform) {
+    public User(final String username, final String password, final String nickname, final String department, final Role role, final String sub, final SocialPlatform socialPlatform, final String deviceToken) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -49,6 +51,7 @@ public class User extends BaseEntity {
         this.role = role;
         this.sub = sub;
         this.socialPlatform = socialPlatform;
+        this.deviceToken = deviceToken;
     }
 
     public void join(final String nickname, final String department) {
@@ -64,5 +67,9 @@ public class User extends BaseEntity {
     public void updateProfile(final String nickname, final String department) {
         this.nickname = nickname;
         this.department = department;
+    }
+
+    public void updateDeviceToken(final String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 }

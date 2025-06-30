@@ -27,10 +27,18 @@ public class StudySession extends BaseEntity {
 
     private LocalDateTime endTime;
 
+    private boolean studyStatus;
+
     @Builder
-    public StudySession(final User user, final LocalDateTime startTime, final LocalDateTime endTime) {
+    public StudySession(final User user, final LocalDateTime startTime, final LocalDateTime endTime, final boolean studyStatus) {
         this.user = user;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.studyStatus = studyStatus;
+    }
+
+    public void updateStudy(final LocalDateTime endTime, final boolean studyStatus) {
+        this.endTime = endTime;
+        this.studyStatus = studyStatus;
     }
 }

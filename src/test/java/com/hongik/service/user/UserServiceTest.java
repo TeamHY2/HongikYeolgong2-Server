@@ -6,9 +6,7 @@ import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.user.request.*;
-import com.hongik.dto.user.response.JoinResponse;
-import com.hongik.dto.user.response.NicknameResponse;
-import com.hongik.dto.user.response.UserResponse;
+import com.hongik.dto.user.response.*;
 import com.hongik.exception.AppException;
 import com.hongik.jwt.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -239,6 +237,76 @@ class UserServiceTest {
                 .hasMessage("이미 존재하는 닉네임입니다.");
     }
 
+    @DisplayName("디바이스 토큰을 추가한다. 토큰값이 존재하지 않는 경우 (null)")
+    @Test
+    void updateDeviceTokenWithoutUserDeviceToken() {
+        // given
+        User user = createUser("user@email.com", "password", "nickname");
+        userRepository.save(user);
+
+        UserDeviceTokenRequest request = UserDeviceTokenRequest.builder()
+                .deviceToken("deviceToken")
+                .build();
+
+        // when
+        UserDeviceTokenResponse response = userService.updateDeviceToken(request, user.getId());
+
+        // then
+        assertThat(response.getId()).isNotNull();
+        assertThat(response)
+                .extracting("id", "username", "nickname", "deviceToken")
+                .containsExactlyInAnyOrder(user.getId(), "user@email.com", "nickname", request.getDeviceToken());
+    }
+
+    @DisplayName("디바이스 토큰을 추가한다. 토큰값이 현재 기기와 다른 경우")
+    @Test
+    void updateDeviceTokenWhenUserDeviceTokenNotEqualsRequestDeviceToken() {
+        // given
+        User user = createUserWithDeviceToken("deviceToken");
+        userRepository.save(user);
+
+        UserDeviceTokenRequest request = UserDeviceTokenRequest.builder()
+                .deviceToken("NewDeviceToken")
+                .build();
+
+        // when
+        UserDeviceTokenResponse response = userService.updateDeviceToken(request, user.getId());
+
+        // then
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getDeviceToken()).isEqualTo("NewDeviceToken");
+    }
+
+    @DisplayName("디바이스 토큰을 조회한다. (토큰 존재하는 상태)")
+    @Test
+    void getDeviceToken() {
+        // given
+        final String deviceToken = "deviceToken";
+        User user = createUserWithDeviceToken(deviceToken);
+        userRepository.save(user);
+
+        // when
+        DeviceTokenResponse response = userService.getDeviceToken(user.getId());
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getDeviceToken()).isEqualTo(deviceToken);
+    }
+
+    @DisplayName("디바이스 토큰을 조회한다. (토큰 존재X 상태)")
+    @Test
+    void getDeviceTokenWithoutDeviceToken() {
+        // given
+        User user = createUser("user@email.com", "password", "nickname");
+        userRepository.save(user);
+
+        // when
+        DeviceTokenResponse response = userService.getDeviceToken(user.getId());
+
+        // then
+        assertThat(response.getDeviceToken()).isNull();
+    }
+
     private User createUser(final String username, final String password, final String nickname) {
         return User.builder()
                 .username(username)
@@ -253,6 +321,15 @@ class UserServiceTest {
         return User.builder()
                 .username(username)
                 .role(Role.GUEST)
+                .build();
+    }
+
+    private User createUserWithDeviceToken(final String deviceToken) {
+        return User.builder()
+//                .username("user@email.com")
+//                .password("password")
+//                .nickname("nickname")
+                .deviceToken(deviceToken)
                 .build();
     }
 }
