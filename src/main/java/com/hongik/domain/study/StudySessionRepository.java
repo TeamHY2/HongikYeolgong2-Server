@@ -14,13 +14,13 @@ import java.util.List;
 
 public interface StudySessionRepository extends JpaRepository<StudySession, Long> {
 
-	@Query(value = "SELECT s.user_id AS userId, u.username AS userName, "
+	@Query(value = "SELECT s.user_id AS userId, u.nickname AS nickname, "
 			+ "(SELECT s2.study_status FROM study_session s2 WHERE s2.user_id = s.user_id AND s2.created_at BETWEEN :startOfDay AND :endOfDay ORDER BY s2.created_at DESC LIMIT 1) AS studyStatus, "
 			+ "SUM(TIMESTAMPDIFF(SECOND, s.start_time, IFNULL(s.end_time, NOW()))) AS totalSeconds, "
 			+ "MAX(s.created_at) AS latestCreatedAt "
 			+ "FROM study_session s JOIN users u ON s.user_id = u.id "
 			+ "WHERE s. created_at BETWEEN :startOfDay AND :endOfDay "
-			+ "GROUP BY s.user_id, u.username "
+			+ "GROUP BY s.user_id, u.nickname "
 			+ "ORDER BY studyStatus DESC, latestCreatedAt DESC ", nativeQuery = true)
 	List<UserStudyDuration> getUserStudyDurationForDayAsSeconds(@Param("startOfDay") LocalDateTime startOfDay,
 																@Param("endOfDay") LocalDateTime endOfDay);
