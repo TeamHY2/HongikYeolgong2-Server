@@ -34,6 +34,8 @@ public class User extends BaseEntity {
 
     private String sub;
 
+    private String appleTransferSub;
+
     @Enumerated(EnumType.STRING)
     private SocialPlatform socialPlatform;
 
@@ -71,5 +73,9 @@ public class User extends BaseEntity {
 
     public void updateDeviceToken(final String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+
+    public void updateAppleTransferSub(final String appleTransferSub) {
+        this.appleTransferSub = appleTransferSub;
     }
 }
