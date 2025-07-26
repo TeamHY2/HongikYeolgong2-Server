@@ -7,11 +7,13 @@ import com.hongik.dto.auth.response.AppleTransferResponse;
 import com.hongik.dto.auth.response.AppleUserInfoResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -149,9 +151,22 @@ public class AppleMigrationService {
 				.compact();
 	}
 
-	private PrivateKey getPrivateKey(String keyPath) throws IOException {
+/*	private PrivateKey getPrivateKey(String keyPath) throws IOException {
 		Resource resource = new FileSystemResource(keyPath);
 		String privateKeyPem = new String(Files.readAllBytes(Paths.get(resource.getURI())));
+		try (PEMParser pemParser = new PEMParser(new StringReader(privateKeyPem))) {
+			PrivateKeyInfo keyInfo = (PrivateKeyInfo) pemParser.readObject();
+			return new JcaPEMKeyConverter().getPrivateKey(keyInfo);
+		}
+	}*/
+
+	private PrivateKey getPrivateKey(String keyFileName) throws IOException {
+		// 1. classpath에서 파일을 읽어옴
+		Resource resource = new ClassPathResource(keyFileName);
+
+		// 2. InputStream으로부터 PEM 문자열을 읽음
+		String privateKeyPem = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
 		try (PEMParser pemParser = new PEMParser(new StringReader(privateKeyPem))) {
 			PrivateKeyInfo keyInfo = (PrivateKeyInfo) pemParser.readObject();
 			return new JcaPEMKeyConverter().getPrivateKey(keyInfo);
