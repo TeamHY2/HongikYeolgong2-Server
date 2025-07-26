@@ -1,13 +1,13 @@
 spring:
   profiles:
-    active: dev
+    active: local
     group:
       local: local, common, oauth
       prod: common, prod, oauth
       dev: dev, oauth
 
 server:
-  env: prod
+  env: local
 
 ---
 
