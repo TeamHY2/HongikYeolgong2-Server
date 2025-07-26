@@ -23,8 +23,8 @@ jobs:
           echo ${{ secrets.APPLICATION_DEV }} | base64 --decode > ./src/main/resources/application-dev.yml
           echo ${{ secrets.APPLICATION_OAUTH }} | base64 --decode > ./src/main/resources/application-oauth.yml
           # echo ${{ secrets.HONGIKYEOLGONG2 }} | base64 --decode > ./src/main/resources/hongikyeolgong2.json
-          echo ${{ secrets.OLD_APPLE_KEY_ID }} | base64 --decode > ./src/main/resources/${{ OLD_APPLE_KEY_PATH }}
-          echo ${{ secrets.NEW_APPLE_KEY_ID }} | base64 --decode > ./src/main/resources/${{ NEW_APPLE_KEY_PATH }}
+          echo ${{ secrets.OLD_APPLE_KEY_ID }} | base64 --decode > ./src/main/resources/${{ secrets.OLD_APPLE_KEY_PATH }}
+          echo ${{ secrets.NEW_APPLE_KEY_ID }} | base64 --decode > ./src/main/resources/${{ secrets.NEW_APPLE_KEY_PATH }}
           ./gradlew clean build --exclude-task test
 
       - name: DockerHub Login
