@@ -78,7 +78,7 @@ public class AppleMigrationService {
 		for (User user : users) {
 			try {
 				String newSub = requestNewSub(user.getAppleTransferSub(), oldAccessToken);
-				user.updateNewSub(newSub);
+				user.updateSub(newSub);
 				userRepository.save(user);
 			} catch (Exception e) {
 				logMigrationError("2단계", user.getId(), e);
