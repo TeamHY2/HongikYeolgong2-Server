@@ -36,8 +36,6 @@ public class User extends BaseEntity {
 
     private String appleTransferSub;
 
-    private String newSub;
-
     @Enumerated(EnumType.STRING)
     private SocialPlatform socialPlatform;
 
@@ -79,9 +77,5 @@ public class User extends BaseEntity {
 
     public void updateAppleTransferSub(final String appleTransferSub) {
         this.appleTransferSub = appleTransferSub;
-    }
-
-    public void updateNewSub(final String newSub) {
-        this.newSub = newSub;
     }
 }
