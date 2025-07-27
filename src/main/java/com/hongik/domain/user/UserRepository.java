@@ -25,6 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "FROM User u "
             + "WHERE u.socialPlatform = :platform "
             + "AND u.sub IS NOT NULL "
+            + "AND u.sub != '' "
             + "GROUP BY u.sub "
             + "HAVING COUNT(u) > 1")
     List<String> findDuplicateSubsBySocialPlatform(@Param("platform") SocialPlatform platform);
@@ -33,6 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "FROM User u "
             + "WHERE u.socialPlatform = :platform "
             + "AND u.sub = :sub "
-            + "AND u.sub IS NOT NULL")
+            + "AND u.sub IS NOT NULL "
+            + "AND u.sub != ''")
     List<User> findBySocialPlatformAndSub(@Param("platform") SocialPlatform platform, @Param("sub") String sub);
 }
