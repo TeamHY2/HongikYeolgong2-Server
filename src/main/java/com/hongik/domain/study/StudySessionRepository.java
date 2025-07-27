@@ -6,6 +6,7 @@ import com.hongik.dto.study.response.StudyRanking;
 import com.hongik.dto.study.response.UserStudyDuration;
 import java.time.LocalDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,17 +14,28 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface StudySessionRepository extends JpaRepository<StudySession, Long> {
+	@Modifying
+	@Query("UPDATE StudySession e "
+			+ "SET e.user.id = :newUserId "
+			+ "WHERE e.user.id = :oldUserId")
+	void updateUserId(@Param("oldUserId") Long oldUserId, @Param("newUserId") Long newUserId);
 
 	@Query(value = "SELECT s.user_id AS userId, u.nickname AS nickname, "
-			+ "(SELECT s2.study_status FROM study_session s2 WHERE s2.user_id = s.user_id AND s2.created_at BETWEEN :startOfDay AND :endOfDay ORDER BY s2.created_at DESC LIMIT 1) AS studyStatus, "
+			+ "( SELECT s2.study_status "
+			+ "FROM study_session s2 "
+			+ "WHERE s2.user_id = s.user_id AND s2.created_at "
+			+ "BETWEEN :startOfDay AND :endOfDay "
+			+ "ORDER BY s2.created_at DESC LIMIT 1 ) AS studyStatus, "
 			+ "SUM(TIMESTAMPDIFF(SECOND, s.start_time, IFNULL(s.end_time, NOW()))) AS totalSeconds, "
 			+ "MAX(s.created_at) AS latestCreatedAt "
-			+ "FROM study_session s JOIN users u ON s.user_id = u.id "
-			+ "WHERE s. created_at BETWEEN :startOfDay AND :endOfDay "
+			+ "FROM study_session s "
+			+ "JOIN users u ON s.user_id = u.id "
+			+ "WHERE s.created_at BETWEEN :startOfDay AND :endOfDay "
 			+ "GROUP BY s.user_id, u.nickname "
-			+ "ORDER BY studyStatus DESC, latestCreatedAt DESC ", nativeQuery = true)
-	List<UserStudyDuration> getUserStudyDurationForDayAsSeconds(@Param("startOfDay") LocalDateTime startOfDay,
-																@Param("endOfDay") LocalDateTime endOfDay);
+			+ "ORDER BY totalSeconds DESC "
+			, nativeQuery = true)
+	List<UserStudyDuration> getUserStudyDurationForDayAsSeconds(@Param("startOfDay" ) LocalDateTime startOfDay,
+																@Param("endOfDay" ) LocalDateTime endOfDay);
 
 	/**
 	 * 2024년 10월 1일에 대한 공부 시간을 조회한다.
@@ -34,10 +46,10 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"AND YEAR(s.start_time) = :year " +
 			"AND MONTH(s.start_time) = :month " +
 			"AND DAY(s.start_time) = :day", nativeQuery = true)
-	Long getStudyDurationForDayAsSeconds(@Param("userId") Long userId,
-										 @Param("year") int year,
-										 @Param("month") int month,
-										 @Param("day") int day);
+	Long getStudyDurationForDayAsSeconds(@Param("userId" ) Long userId,
+										 @Param("year" ) int year,
+										 @Param("month" ) int month,
+										 @Param("day" ) int day);
 
 	/**
 	 * 2024년 10월에 대한 공부 시간을 조회한다.
@@ -47,9 +59,9 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"WHERE s.user_id = :userId " +
 			"AND YEAR(s.start_time) = :year " +
 			"AND MONTH(s.start_time) = :month", nativeQuery = true)
-	Long getStudyDurationForMonthAsSeconds(@Param("userId") Long userId,
-										   @Param("year") int year,
-										   @Param("month") int month);
+	Long getStudyDurationForMonthAsSeconds(@Param("userId" ) Long userId,
+										   @Param("year" ) int year,
+										   @Param("month" ) int month);
 
 	/**
 	 * 2024년에 대한 공부 시간을 조회한다.
@@ -58,8 +70,8 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"FROM study_session s " +
 			"WHERE s.user_id = :userId " +
 			"AND YEAR(s.start_time) = :year", nativeQuery = true)
-	Long getStudyDurationForYearAsSeconds(@Param("userId") Long userId,
-										  @Param("year") int year);
+	Long getStudyDurationForYearAsSeconds(@Param("userId" ) Long userId,
+										  @Param("year" ) int year);
 
 	/**
 	 * 2024년 학기에 대한 공부 시간을 조회한다.
@@ -77,9 +89,9 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"ELSE 0 END AS semesterStudyTime " +
 			"FROM study_session s " +
 			"WHERE s.user_id = :userId", nativeQuery = true)
-	Long getStudyDurationForSemesterAsSeconds(@Param("userId") Long userId,
-											  @Param("year") int year,
-											  @Param("semester") String semester);
+	Long getStudyDurationForSemesterAsSeconds(@Param("userId" ) Long userId,
+											  @Param("year" ) int year,
+											  @Param("semester" ) String semester);
 
 	@Query(value = "SELECT DATE(s.start_time) AS date, COUNT(*) AS studyCount " +
 			"FROM study_session s " +
@@ -87,9 +99,9 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"AND YEAR(s.start_time) = :year " +
 			"AND MONTH(s.start_time) = :month " +
 			"GROUP BY DATE(s.start_time)", nativeQuery = true)
-	List<Object[]> getStudyCountByMonth(@Param("userId") Long userId,
-										@Param("year") int year,
-										@Param("month") int month);
+	List<Object[]> getStudyCountByMonth(@Param("userId" ) Long userId,
+										@Param("year" ) int year,
+										@Param("month" ) int month);
 
 	/**
 	 * 20xx년 전체 공부 횟수를 조회한다. 캘린더에 공부 횟수로 색칠한다.
@@ -98,7 +110,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"FROM study_session s " +
 			"WHERE s.user_id = :userId " +
 			"GROUP BY DATE(s.start_time)", nativeQuery = true)
-	List<StudyCountLocalDate> getStudyCountByAll(@Param("userId") Long userId);
+	List<StudyCountLocalDate> getStudyCountByAll(@Param("userId" ) Long userId);
 
 	/**
 	 * 20xx년 x월 x일에 대한 월요일~일요일 공부 횟수를 조회한다. 홈 화면 일주일 캘린더에 공부 횟수로 색칠한다. 반환값은 LocalDate, Long
@@ -110,7 +122,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"WHERE s.user_id = :userId " +
 			"and DATE(s.start_time) in :dates " +
 			"GROUP BY DATE(s.start_time)", nativeQuery = true)
-	List<StudyCount> getStudyCountByWeek(@Param("userId") Long userId, List<LocalDate> dates);
+	List<StudyCount> getStudyCountByWeek(@Param("userId" ) Long userId, List<LocalDate> dates);
 
 	/**
 	 * 2024년 10월 01일 기준 2024년 공부 시간 2024년 10월 공부시간 2024년 10월 1일 공부시간을 측정한다.
@@ -121,7 +133,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"END) as yearly " +
 			"FROM study_session s " +
 			"WHERE s.user_id = :userId", nativeQuery = true)
-	Long getTotalStudyTime(@Param("userId") Long userId, @Param("year") int year);
+	Long getTotalStudyTime(@Param("userId" ) Long userId, @Param("year" ) int year);
 
 	/**
 	 * 주차 데이터를 매개변수로, 랭킹을 조회한다.
@@ -135,6 +147,6 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 			"LEFT JOIN study_session s use index (idx_study_session_starttime) ON u.id = s.user_id " +
 			"AND s.start_time >= :startDate AND s.start_time < :endDate " +
 			"GROUP BY d.department_name", nativeQuery = true)
-	List<StudyRanking> getWeeklyStudyTimeRankingByDepartment(@Param("startDate") LocalDate startDate,
-															 @Param("endDate") LocalDate endDate);
+	List<StudyRanking> getWeeklyStudyTimeRankingByDepartment(@Param("startDate" ) LocalDate startDate,
+															 @Param("endDate" ) LocalDate endDate);
 }
