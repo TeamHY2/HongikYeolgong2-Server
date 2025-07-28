@@ -31,10 +31,10 @@ public class StudySessionController {
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "열람실 이용 시작", description = "열람실 이용을 시작합니다. 시작 시간을 요청값에 담아주세요.")
     @PostMapping("/start")
-    public ApiResponse<StudySessionStartResponse> createStudy2(@Valid @RequestBody StudySessionCreateRequest2 request,
+    public ApiResponse<StudySessionStartResponse> createStudy(@Valid @RequestBody StudySessionCreateRequest2 request,
                                                          Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
-        return ApiResponse.ok(studySessionService.createStudy2(request, userId));
+        return ApiResponse.ok(studySessionService.createStudy(request, userId));
     }
 
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_STUDY_SESSION})
@@ -51,14 +51,14 @@ public class StudySessionController {
         return ApiResponse.ok(studySessionService.getStudyingUsers());
     }
 
-    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+/*    @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "열람실 이용 종료", description = "열람실 이용을 종료합니다. 시작 시간과 종료 시간을 요청값에 담아주세요.")
     @PostMapping
     public ApiResponse<StudySessionResponse> createStudy(@Valid @RequestBody StudySessionCreateRequest request,
                                                          Authentication authentication) {
         Long userId = Long.parseLong(authentication.getName());
         return ApiResponse.ok(studySessionService.createStudy(request, userId));
-    }
+    }*/
 
     @ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
     @Operation(summary = "(기록 화면 캘린더 공부 횟수와 함께 표시) 연간, 월간, 투데이 공부 시간 조회", description = "Param값이 없으면 서버 기준 현재 시간을 기준으로 날짜를 정합니다. <br> Minute을 제공합니다.")

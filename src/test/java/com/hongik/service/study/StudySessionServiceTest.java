@@ -5,7 +5,9 @@ import com.hongik.domain.study.StudySessionRepository;
 import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
+import com.hongik.dto.study.request.EndStudySessionRequest;
 import com.hongik.dto.study.request.StudySessionCreateRequest;
+import com.hongik.dto.study.request.StudySessionCreateRequest2;
 import com.hongik.dto.study.response.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,29 +39,91 @@ class StudySessionServiceTest {
         userRepository.deleteAllInBatch();
     }
 
-    @DisplayName("열람실 이용 종료한다. 시작 시간과 종료 시간을 저장한다.")
+
+    @DisplayName("새로운 스터디 세션을 시작한다 (createStudy2)")
     @Test
     void createStudy() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        User user = createUser("username", "password", "nickname", "department");
+        User user = createUser("username", "password", "nickname", "컴퓨터공학부");
         userRepository.save(user);
 
-        StudySessionCreateRequest request = StudySessionCreateRequest.builder()
+        StudySessionCreateRequest2 request = StudySessionCreateRequest2.builder()
                 .startTime(now)
-                .endTime(now.plusMinutes(5))
                 .build();
 
         // when
-        StudySessionResponse studySessionResponse = studySessionService.createStudy(request, user.getId());
+        StudySessionStartResponse response = studySessionService.createStudy(request, user.getId());
 
         // then
-        assertThat(studySessionResponse.getId()).isNotNull();
-        assertThat(studySessionResponse)
-                .extracting("startTime", "endTime")
-                .containsExactlyInAnyOrder(now, now.plusMinutes(5));
+        assertThat(response.getId()).isNotNull();
+
+        StudySession saved = studySessionRepository.findById(response.getId())
+                .orElseThrow();
+        assertThat(saved.getUser().getId()).isEqualTo(user.getId());
+        assertThat(saved.getStartTime()).isEqualTo(now);
+        assertThat(saved.getEndTime()).isNull(); // 시작만 하고 끝내지 않음
+        assertThat(saved.isStudyStatus()).isTrue();
     }
-    
+
+    @DisplayName("스터디 세션 종료 시 endTime을 저장하고 상태를 false로 만든다")
+    @Test
+    void updateStudy() {
+        // given
+        LocalDateTime startTime = LocalDateTime.of(2024, 7, 14, 10, 0);
+        LocalDateTime endTime = startTime.plusHours(1);
+
+        User user = createUser("username", "password", "nickname", "조소과");
+        userRepository.save(user);
+
+        StudySession studySession = StudySession.builder()
+                .user(user)
+                .startTime(startTime)
+                .studyStatus(true)
+                .build();
+        studySessionRepository.save(studySession);
+
+        EndStudySessionRequest request = EndStudySessionRequest.builder()
+                .studySessionId(studySession.getId())
+                .endTime(endTime)
+                .build();
+
+        // when
+        EndStudySessionResponse response = studySessionService.updateStudy(request);
+
+        // then
+        assertThat(response.getStudySessionId()).isEqualTo(studySession.getId());
+        StudySession updated = studySessionRepository.findById(studySession.getId()).orElseThrow();
+        assertThat(updated.getEndTime()).isEqualTo(endTime);
+        assertThat(updated.isStudyStatus()).isFalse();
+    }
+
+    @DisplayName("오늘 하루 동안 공부 중이거나 공부한 유저 리스트를 반환한다")
+    @Test
+    void getStudyingUsers() {
+        // given
+        LocalDate today = LocalDate.now();
+        LocalDateTime startTime = today.atTime(8, 0);
+        LocalDateTime endTime = today.atTime(10, 30);
+
+        User user = createUser("username", "password", "nickname", "컴퓨터공학부");
+        userRepository.save(user);
+
+        StudySession session1 = createStudySession(user, startTime, endTime, false);
+        studySessionRepository.save(session1);
+
+        // when
+        List<StudyingUserResponse> responses = studySessionService.getStudyingUsers();
+
+        // then
+        assertThat(responses).isNotEmpty();
+        StudyingUserResponse response = responses.get(0);
+        assertThat(response.getUserId()).isEqualTo(user.getId());
+        assertThat(response.getNickname()).isEqualTo(user.getNickname());
+        assertThat(response.getStudyDuration()).isEqualTo(java.time.LocalTime.of(2, 30));
+        assertThat(response.isStudyStatus()).isFalse();
+    }
+
     @DisplayName("Param 값이 없을 때, 서버 시간 기준으로 유저의 날짜(Year, Month, Day)에 대한 공부 시간 조회")
     @Test
     void getStudyDuration() {
@@ -276,6 +340,15 @@ class StudySessionServiceTest {
                 .user(user)
                 .startTime(startTime)
                 .endTime(endTime)
+                .build();
+    }
+
+    private StudySession createStudySession(User user, final LocalDateTime startTime, final LocalDateTime endTime, final boolean studyStatus) {
+        return StudySession.builder()
+                .user(user)
+                .startTime(startTime)
+                .endTime(endTime)
+                .studyStatus(studyStatus)
                 .build();
     }
 }
