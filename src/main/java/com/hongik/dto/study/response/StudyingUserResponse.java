@@ -14,7 +14,7 @@ public class StudyingUserResponse {
 	private Long userId;
 
 	@Schema(example = "kim")
-	private String userName;
+	private String nickname;
 
 	@Schema(example = "14:30:00")
 	private LocalTime studyDuration;
@@ -24,19 +24,19 @@ public class StudyingUserResponse {
 
 
 	@Builder
-	public StudyingUserResponse(final Long userId, final String userName, final LocalTime studyDuration,
+	public StudyingUserResponse(final Long userId, final String nickname, final LocalTime studyDuration,
 								final boolean studyStatus) {
 		this.userId = userId;
-		this.userName = userName;
+		this.nickname = nickname;
 		this.studyDuration = studyDuration;
 		this.studyStatus = studyStatus;
 	}
 
-	public static StudyingUserResponse of(final Long userId, final String userName, final LocalTime studyDuration,
+	public static StudyingUserResponse of(final Long userId, final String nickname, final LocalTime studyDuration,
 										  final boolean studyStatus) {
 		return StudyingUserResponse.builder()
 				.userId(userId)
-				.userName(userName)
+				.nickname(nickname)
 				.studyDuration(studyDuration)
 				.studyStatus(studyStatus)
 				.build();

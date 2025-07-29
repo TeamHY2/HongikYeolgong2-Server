@@ -7,3 +7,13 @@ apple:
   iss: A1B2CDE4EF
   public-key-url: https://appleid.apple.com/auth/keys
   client-id: com.papaapa.aapapapap
+  old:
+    client-id: com.papaapa.aapapapap
+    key-path: src/main/resources/PPPPPPPPPP.p8
+    team-id:  PPPPPPPPPP
+    key-id: PPPPPPPPPP
+  new:
+    client-id: com.papaapa.aapapapap
+    key-path: src/main/resources/PPPPPPPPPP.p8
+    team-id: PPPPPPPPPP
+    key-id: PPPPPPPPPP

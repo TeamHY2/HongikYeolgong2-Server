@@ -37,7 +37,7 @@ public class StudySessionService {
 	private final WeeklyRepository weeklyRepository;
 
 	@Transactional
-	public StudySessionStartResponse createStudy2(StudySessionCreateRequest2 request, final Long userId) {
+	public StudySessionStartResponse createStudy(StudySessionCreateRequest2 request, final Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
 
@@ -73,11 +73,11 @@ public class StudySessionService {
 					int minutes = (totalSeconds % 3600) / 60;
 					int seconds = totalSeconds % 60;
 
-					boolean studyStatus = result.getStudyStatus() == 1;
+					boolean studyStatus = result.getStudyStatus();
 
 					return StudyingUserResponse.of(
 							result.getUserId(),
-							result.getUserName(),
+							result.getNickname(),
 							LocalTime.of(hours, minutes, seconds),
 							studyStatus
 					);
@@ -85,7 +85,7 @@ public class StudySessionService {
 				.collect(Collectors.toList());
 	}
 
-	@Transactional
+/*	@Transactional
 	public StudySessionResponse createStudy(StudySessionCreateRequest request, final Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
@@ -93,7 +93,7 @@ public class StudySessionService {
 		StudySession savedStudySession = studySessionRepository.save(request.toEntity(user));
 
 		return StudySessionResponse.of(savedStudySession);
-	}
+	}*/
 
 	public StudyDurationResponse getStudyDuration(final LocalDate date, final Long userId) {
 		User user = userRepository.findById(userId)
