@@ -71,7 +71,7 @@ public class StudySessionService {
 					int minutes = (totalSeconds % 3600) / 60;
 					int seconds = totalSeconds % 60;
 
-					boolean studyStatus = result.getStudyStatus();
+					boolean studyStatus = result.getStudyStatus() == 1;
 
 					return StudyingUserResponse.of(
 							result.getUserId(),
