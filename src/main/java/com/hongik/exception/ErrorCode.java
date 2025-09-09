@@ -28,7 +28,10 @@ public enum ErrorCode {
     ALREADY_EXIST_WEEK(HttpStatus.CONFLICT, "이미 존재하는 연도에 주차데이터입니다."),
 
     // StudySession
-    NOT_FOUND_STUDY_SESSION(HttpStatus.NOT_FOUND, "존재하지 않는 스터디 세션입니다.");
+    NOT_FOUND_STUDY_SESSION(HttpStatus.NOT_FOUND, "존재하지 않는 스터디 세션입니다."),
+
+    //Library
+    NOT_FOUND_LIBRARY(HttpStatus.NOT_FOUND, "존재하지 않는 library입니다.");
 
     private final HttpStatus status;
 

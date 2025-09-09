@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface StudySessionRepository extends JpaRepository<StudySession, Long> {
+	List<StudySession> findByEndTimeIsNull();
+
 	@Modifying
 	@Query("UPDATE StudySession e "
 			+ "SET e.user.id = :newUserId "
@@ -23,14 +25,14 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 	@Query(value = "SELECT s.user_id AS userId, u.nickname AS nickname, "
 			+ "( SELECT s2.study_status "
 			+ "FROM study_session s2 "
-			+ "WHERE s2.user_id = s.user_id AND s2.start_time "
+			+ "WHERE s2.user_id = s.user_id AND s2.created_at "
 			+ "BETWEEN :startOfDay AND :endOfDay "
-			+ "ORDER BY s2.start_time DESC LIMIT 1 ) AS studyStatus, "
+			+ "ORDER BY s2.created_at DESC LIMIT 1 ) AS studyStatus, "
 			+ "SUM(TIMESTAMPDIFF(SECOND, s.start_time, IFNULL(s.end_time, NOW()))) AS totalSeconds, "
 			+ "MAX(s.start_time) AS latestStartTime "
 			+ "FROM study_session s "
 			+ "JOIN users u ON s.user_id = u.id "
-			+ "WHERE s.start_time BETWEEN :startOfDay AND :endOfDay "
+			+ "WHERE s.created_at BETWEEN :startOfDay AND :endOfDay "
 			+ "GROUP BY s.user_id, u.nickname "
 			+ "ORDER BY totalSeconds DESC "
 			, nativeQuery = true)

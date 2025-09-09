@@ -1,5 +1,7 @@
 package com.hongik.service.study;
 
+import com.hongik.domain.library.Library;
+import com.hongik.domain.library.LibraryRepository;
 import com.hongik.domain.study.StudySession;
 import com.hongik.domain.study.StudySessionRepository;
 import com.hongik.domain.user.User;
@@ -31,8 +33,25 @@ import static java.util.stream.Collectors.toList;
 public class StudySessionService {
 
 	private final StudySessionRepository studySessionRepository;
-
 	private final UserRepository userRepository;
+	private final LibraryRepository libraryRepository;
+
+	@Transactional
+	public void studySessionScheduler(){
+		Library library = libraryRepository.findFirstByOrderByIdAsc()
+				.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_LIBRARY, ErrorCode.NOT_FOUND_LIBRARY.getMessage()));
+		List<StudySession> sessions = studySessionRepository.findByEndTimeIsNull();
+
+		int libraryHours = library.getLibraryHours();
+
+		for (StudySession session : sessions) {
+			LocalDateTime expireTime = session.getStartTime().plusHours(libraryHours);
+
+			if (LocalDateTime.now().isAfter(expireTime)) {
+				session.updateStudy(expireTime, false);
+			}
+		}
+	}
 
 	@Transactional
 	public StudySessionStartResponse createStudy(StudySessionCreateRequest2 request, final Long userId) {
