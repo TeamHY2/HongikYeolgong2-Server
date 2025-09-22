@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class StudySessionStartResponse {
 
     @Schema(example = "1")
-    private Long id;
+    private Long studySessionId;
 
     @Schema(example = "2")
     private Long userId;
@@ -23,15 +23,15 @@ public class StudySessionStartResponse {
 
 
     @Builder
-    public StudySessionStartResponse(final Long id, final Long userId, final LocalDateTime startTime) {
-        this.id = id;
+    public StudySessionStartResponse(final Long studySessionId, final Long userId, final LocalDateTime startTime) {
+        this.studySessionId = studySessionId;
         this.userId = userId;
         this.startTime = startTime;
     }
 
     public static StudySessionStartResponse of(StudySession studySession) {
         return StudySessionStartResponse.builder()
-                .id(studySession.getId())
+                .studySessionId(studySession.getId())
                 .startTime(studySession.getStartTime())
                 .userId(studySession.getUser().getId())
                 .build();

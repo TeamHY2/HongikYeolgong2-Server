@@ -4,6 +4,7 @@ import com.hongik.domain.user.Role;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.study.response.StudyCountLocalDate;
+import com.hongik.dto.study.response.UserStudyDuration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,62 @@ class StudySessionRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @DisplayName("특정 날짜에 유저별 공부 시간 및 최근 상태 조회")
+    @Test
+    void getUserStudyDurationForDayAsSeconds() {
+        // given
+        User user1 = createUser("user1", "pw", "닉1", "컴공");
+        User user2 = createUser("user2", "pw", "닉2", "경영");
+        userRepository.saveAll(List.of(user1, user2));
+
+        LocalDate date = LocalDate.of(2024, 9, 19);
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+
+        // user1: 2시간
+        StudySession u1s1 = createStudySession(user1,
+                LocalDateTime.of(2024, 9, 19, 10, 0),
+                LocalDateTime.of(2024, 9, 19, 11, 0),
+                true);
+
+        StudySession u1s2 = createStudySession(user1,
+                LocalDateTime.of(2024, 9, 19, 20, 0),
+                LocalDateTime.of(2024, 9, 19, 21, 0),
+                false);
+
+        // user2: 1시간
+        StudySession u2s1 = createStudySession(user2,
+                LocalDateTime.of(2024, 9, 19, 9, 0),
+                LocalDateTime.of(2024, 9, 19, 10, 0),
+                true);
+
+        studySessionRepository.saveAll(List.of(u1s1, u1s2, u2s1));
+
+        // when
+        List<UserStudyDuration> result = studySessionRepository.getUserStudyDurationForDayAsSeconds(startOfDay, endOfDay);
+
+        // then
+        assertThat(result).hasSize(2);
+
+        UserStudyDuration user1Result = result.stream()
+                .filter(r -> r.getUserId().equals(user1.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertThat(user1Result.getNickname()).isEqualTo("닉1");
+        assertThat(user1Result.getTotalSeconds()).isEqualTo(7200L);
+        assertThat(user1Result.getStudyStatus()).isEqualTo(false);
+
+        UserStudyDuration user2Result = result.stream()
+                .filter(r -> r.getUserId().equals(user2.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertThat(user2Result.getNickname()).isEqualTo("닉2");
+        assertThat(user2Result.getTotalSeconds()).isEqualTo(3600L);
+        assertThat(user2Result.getStudyStatus()).isEqualTo(true);
+    }
+
+
 
     @DisplayName("유저의 특정 연도(Year)에 대한 공부 시간 조회 (결과 SECOND)")
     @Test
@@ -196,6 +253,15 @@ class StudySessionRepositoryTest {
                 .user(user)
                 .startTime(startTime)
                 .endTime(endTime)
+                .build();
+    }
+
+    private StudySession createStudySession(User user, LocalDateTime startTime, LocalDateTime endTime, boolean studyStatus) {
+        return StudySession.builder()
+                .user(user)
+                .startTime(startTime)
+                .endTime(endTime)
+                .studyStatus(studyStatus)
                 .build();
     }
 }

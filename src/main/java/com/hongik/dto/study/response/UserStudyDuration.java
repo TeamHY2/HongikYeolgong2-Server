@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface UserStudyDuration {
 	Long getUserId();
-	String getUserName();
+	String getNickname();
 	int getStudyStatus();
 	int getTotalSeconds();
 	LocalDateTime getLatestCreatedAt();
