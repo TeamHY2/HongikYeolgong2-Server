@@ -18,7 +18,7 @@ public class ErrorResponseDto {
     private String message;
 
     public static ErrorResponseDto from(ErrorCode errorCode) {
-        return new ErrorResponseDto(errorCode.getStatus().value(), errorCode.getStatus().name(), errorCode.getMessage());
+        return new ErrorResponseDto(errorCode.getCode(), errorCode.getStatus().name(), errorCode.getMessage());
     }
 //    private ErrorResponseDto(ErrorCode errorCode) {
 //        super(errorCode.toString(), errorCode.getMessage());
