@@ -22,12 +22,12 @@ public class Block extends BaseEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "sender_id")
-	private User senderId;
+	@JoinColumn(name = "blocker_id")
+	private User blocker;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "receiver_id")
-	private User receiverId;
+	@JoinColumn(name = "blocked_id")
+	private User blocked;
 
 	private Boolean isDeleted;
 }

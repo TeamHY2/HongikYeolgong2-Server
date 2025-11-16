@@ -22,11 +22,11 @@ public class Notification extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "sender_id")
-	private User senderId;
+	private User sender;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "receiver_id")
-	private User receiverId;
+	private User receiver;
 
 	private String content;
 
