@@ -6,11 +6,15 @@ import com.hongik.domain.friend.FriendStatus;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.friend.request.FriendCreateRequest;
+import com.hongik.dto.friend.request.FriendUpdateRequest;
 import com.hongik.dto.friend.response.FriendCreateResponse;
+import com.hongik.dto.friend.response.FriendUpdateResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +22,7 @@ public class FriendService {
 	private final FriendRepository friendRepository;
 	private final UserRepository userRepository;
 
+	@Transactional
 	public FriendCreateResponse createFriend(Long userId, FriendCreateRequest request) {
 		User findSender = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER,
 				ErrorCode.NOT_FOUND_USER.getMessage()));
@@ -44,6 +49,25 @@ public class FriendService {
 				.id(friend.getId())
 				.receiverId(friend.getReceiver().getId())
 				.friendStatus(friend.getFriendStatus())
+				.build();
+	}
+
+	@Transactional
+	public FriendUpdateResponse updateFriend(Long userId, FriendUpdateRequest request) {
+		User findReceiver = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER,
+				ErrorCode.NOT_FOUND_USER.getMessage()));
+		User findSender = userRepository.findById(request.getSenderId())
+				.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER,
+						ErrorCode.NOT_FOUND_USER.getMessage()));
+		Friend findFriend = friendRepository.findBySenderAndReceiverAndFriendStatus(findSender, findReceiver,
+				FriendStatus.PENDING).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_FRIEND_REQUEST,
+				ErrorCode.NOT_FOUND_FRIEND_REQUEST.getMessage()));
+
+		findFriend.updateRequest(request.getFriendStatus());
+
+		return FriendUpdateResponse.builder()
+				.senderId(findFriend.getSender().getId())
+				.friendStatus(findFriend.getFriendStatus())
 				.build();
 	}
 }
