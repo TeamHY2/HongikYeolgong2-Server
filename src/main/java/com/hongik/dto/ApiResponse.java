@@ -21,11 +21,22 @@ public class ApiResponse<T> {
 
     private T data;
 
+    public ApiResponse(final int code, final HttpStatus status, final String message, final T data) {
+        this.code = code;
+        this.status = status;
+        this.message = message;
+        this.data = data;
+    }
+
     public ApiResponse(final HttpStatus status, final String message, final T data) {
         this.code = status.value();
         this.status = status;
         this.message = message;
         this.data = data;
+    }
+
+    public static <T> ApiResponse<T> of(int code, HttpStatus httpStatus, String message, T data) {
+        return new ApiResponse<>(code, httpStatus, message, data);
     }
 
     public static <T> ApiResponse<T> of(HttpStatus httpStatus, String message, T data) {
