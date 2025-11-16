@@ -27,7 +27,7 @@ public class FriendService {
 
 		Friend findFriend = friendRepository.findBySenderAndReceiver(findSender, findReceiver);
 		if (findFriend.getFriendStatus() == FriendStatus.PENDING) {
-			throw new AppException(ErrorCode.FRIEND_ALREADY_APPENDING, ErrorCode.FRIEND_ALREADY_APPENDING.getMessage());
+			throw new AppException(ErrorCode.FRIEND_ALREADY_PENDING, ErrorCode.FRIEND_ALREADY_PENDING.getMessage());
 		} else if (findFriend.getFriendStatus() == FriendStatus.ACCEPTED) {
 			throw new AppException(ErrorCode.FRIEND_ALREADY_ACCEPTED, ErrorCode.FRIEND_ALREADY_ACCEPTED.getMessage());
 		}
