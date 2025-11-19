@@ -1,5 +1,6 @@
 package com.hongik.service.friend;
 
+import com.hongik.domain.friend.DateType;
 import com.hongik.domain.friend.Friend;
 import com.hongik.domain.friend.FriendRepository;
 import com.hongik.domain.friend.FriendStatus;
@@ -8,11 +9,14 @@ import com.hongik.domain.user.UserRepository;
 import com.hongik.dto.friend.request.FriendCreateRequest;
 import com.hongik.dto.friend.request.FriendUpdateRequest;
 import com.hongik.dto.friend.response.FriendCreateResponse;
+import com.hongik.dto.friend.response.FriendSearchResponse;
+import com.hongik.dto.friend.response.FriendStudySessionResponse;
 import com.hongik.dto.friend.response.FriendUpdateResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,5 +73,27 @@ public class FriendService {
 				.senderId(findFriend.getSender().getId())
 				.friendStatus(findFriend.getFriendStatus())
 				.build();
+	}
+
+	public List<FriendSearchResponse> getFriend(Long userId, String nickname) {
+		List<User> searchFriends = userRepository.findAllByNicknameContains(nickname);
+
+		if (searchFriends.isEmpty()) {
+			throw new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage());
+		}
+
+		return searchFriends.stream()
+				.map(friend -> {
+					FriendStatus status = friendRepository.findFriendRelation(userId, friend.getId())
+							.map(Friend::getFriendStatus)
+							.orElse(FriendStatus.NONE);
+
+					return FriendSearchResponse.builder()
+							.userId(friend.getId())
+							.nickname(friend.getNickname())
+							.friendStatus(status)
+							.build();
+				})
+				.collect(Collectors.toList());
 	}
 }

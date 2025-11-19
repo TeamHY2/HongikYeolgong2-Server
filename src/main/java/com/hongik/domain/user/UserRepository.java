@@ -37,4 +37,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "AND u.sub IS NOT NULL "
             + "AND u.sub != ''")
     List<User> findBySocialPlatformAndSub(@Param("platform") SocialPlatform platform, @Param("sub") String sub);
+
+    List<User> findAllByNicknameContains(String nickname);
 }

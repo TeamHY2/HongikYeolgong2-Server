@@ -1,5 +1,5 @@
 package com.hongik.domain.friend;
 
 public enum FriendStatus {
-	PENDING, ACCEPTED, REJECTED
+	PENDING, ACCEPTED, REJECTED, NONE
 }

@@ -5,24 +5,28 @@ import static com.hongik.exception.ErrorCode.FRIEND_ALREADY_PENDING;
 import static com.hongik.exception.ErrorCode.INVALID_INPUT_VALUE;
 import static com.hongik.exception.ErrorCode.INVALID_JWT_EXCEPTION;
 import static com.hongik.exception.ErrorCode.NOT_FOUND_FRIEND_REQUEST;
+import static com.hongik.exception.ErrorCode.NOT_FOUND_USER;
 import static com.hongik.exception.ErrorCode.REGISTRATION_INCOMPLETE;
 
-import com.hongik.domain.user.User;
 import com.hongik.dto.ApiResponse;
 import com.hongik.dto.friend.request.FriendCreateRequest;
 import com.hongik.dto.friend.request.FriendUpdateRequest;
 import com.hongik.dto.friend.response.FriendCreateResponse;
+import com.hongik.dto.friend.response.FriendSearchResponse;
 import com.hongik.dto.friend.response.FriendUpdateResponse;
 import com.hongik.service.friend.FriendService;
 import com.hongik.swagger.ApiErrorCodeExamples;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Friend Controller - 친구 컨트롤러", description = "친구 요청/수락/거절/삭제와 친구 열람실 이용 시간을 조회합니다.")
@@ -50,5 +54,11 @@ public class FriendController {
 		return ApiResponse.ok(friendService.updateFriend(Long.parseLong(authentication.getName()), request));
 	}
 
-
+	@GetMapping
+	@Operation(summary = "친구 추가 검색 API", description = "친구 추가 검색 API. nickname을 요청 값에 담아주세요.")
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+	public ApiResponse<List<FriendSearchResponse>> getFriend(Authentication authentication,
+															 @RequestParam String nickname) {
+		return ApiResponse.ok(friendService.getFriend(Long.parseLong(authentication.getName()), nickname));
+	}
 }
