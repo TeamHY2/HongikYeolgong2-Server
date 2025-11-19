@@ -86,7 +86,7 @@ public class SwaggerConfig {
                 .map(
                         errorCode -> ExampleHolder.builder()
                                 .holder(getSwaggerExample(errorCode))
-                                .code(errorCode.getStatus().value())
+                                .code(errorCode.getCode())
                                 .name(errorCode.name())
                                 .build()
                 )
@@ -104,7 +104,7 @@ public class SwaggerConfig {
         ExampleHolder exampleHolder = ExampleHolder.builder()
                 .holder(getSwaggerExample(errorCode))
                 .name(errorCode.name())
-                .code(errorCode.getStatus().value())
+                .code(errorCode.getCode())
                 .build();
         addExamplesToResponses(responses, exampleHolder);
     }

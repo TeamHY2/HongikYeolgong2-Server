@@ -24,6 +24,7 @@ public class ApiControllerAdvice {
         log.error("appException = {}", e.getMessage());
         return ResponseEntity.status(e.getErrorCode().getStatus())
                 .body(ApiResponse.of(
+                        e.getErrorCode().getCode(),
                         e.getErrorCode().getStatus(),
                         e.getMessage(),
                         null
