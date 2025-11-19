@@ -1,6 +1,5 @@
 package com.hongik.service.friend;
 
-import com.hongik.domain.friend.DateType;
 import com.hongik.domain.friend.Friend;
 import com.hongik.domain.friend.FriendRepository;
 import com.hongik.domain.friend.FriendStatus;
@@ -10,7 +9,6 @@ import com.hongik.dto.friend.request.FriendCreateRequest;
 import com.hongik.dto.friend.request.FriendUpdateRequest;
 import com.hongik.dto.friend.response.FriendCreateResponse;
 import com.hongik.dto.friend.response.FriendSearchResponse;
-import com.hongik.dto.friend.response.FriendStudySessionResponse;
 import com.hongik.dto.friend.response.FriendUpdateResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
