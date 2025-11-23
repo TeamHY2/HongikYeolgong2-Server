@@ -4,15 +4,18 @@ import static com.hongik.exception.ErrorCode.FRIEND_ALREADY_ACCEPTED;
 import static com.hongik.exception.ErrorCode.FRIEND_ALREADY_PENDING;
 import static com.hongik.exception.ErrorCode.INVALID_INPUT_VALUE;
 import static com.hongik.exception.ErrorCode.INVALID_JWT_EXCEPTION;
+import static com.hongik.exception.ErrorCode.NOT_FOUND_FRIEND;
 import static com.hongik.exception.ErrorCode.NOT_FOUND_FRIEND_REQUEST;
 import static com.hongik.exception.ErrorCode.NOT_FOUND_USER;
 import static com.hongik.exception.ErrorCode.REGISTRATION_INCOMPLETE;
 
+import com.hongik.domain.friend.DateType;
 import com.hongik.dto.ApiResponse;
 import com.hongik.dto.friend.request.FriendCreateRequest;
 import com.hongik.dto.friend.request.FriendUpdateRequest;
 import com.hongik.dto.friend.response.FriendCreateResponse;
 import com.hongik.dto.friend.response.FriendSearchResponse;
+import com.hongik.dto.friend.response.FriendStudyResponse;
 import com.hongik.dto.friend.response.FriendUpdateResponse;
 import com.hongik.service.friend.FriendService;
 import com.hongik.swagger.ApiErrorCodeExamples;
@@ -60,5 +63,13 @@ public class FriendController {
 	public ApiResponse<List<FriendSearchResponse>> getFriend(Authentication authentication,
 															 @RequestParam String nickname) {
 		return ApiResponse.ok(friendService.getFriend(Long.parseLong(authentication.getName()), nickname));
+	}
+
+	@GetMapping("/study")
+	@Operation(summary = "친구 열람실 이용시간 목록 조회 API", description = "친구 열람실 이용시간 목록 조회 API. DateType을 요청 값에 담아주세요.")
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER, NOT_FOUND_FRIEND})
+	public ApiResponse<List<FriendStudyResponse>>getFriendStudy(Authentication authentication,
+																@RequestParam DateType dateType) {
+		return ApiResponse.ok(friendService.getFriendStudy(Long.parseLong(authentication.getName()), dateType));
 	}
 }
