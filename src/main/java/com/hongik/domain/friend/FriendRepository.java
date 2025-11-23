@@ -1,6 +1,7 @@
 package com.hongik.domain.friend;
 
 import com.hongik.domain.user.User;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,11 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
        OR (f.sender.id = :friendId AND f.receiver.id = :userId)
     """)
 	Optional<Friend> findFriendRelation(Long userId, Long friendId);
+
+	@Query("""
+    SELECT f FROM Friend f
+    WHERE f.sender.id = :userId
+       OR f.receiver.id = :userId
+    """)
+	List<Friend> findFriend(Long userId);
 }

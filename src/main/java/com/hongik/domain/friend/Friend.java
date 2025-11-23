@@ -45,4 +45,12 @@ public class Friend extends BaseEntity {
 	public void updateRequest(FriendStatus friendStatus) {
 		this.friendStatus = friendStatus;
 	}
+
+	public Long getOtherUserId(Long userId) {
+		if (this.sender.getId().equals(userId)) {
+			return this.receiver.getId();
+		} else {
+			return this.sender.getId();
+		}
+	}
 }
