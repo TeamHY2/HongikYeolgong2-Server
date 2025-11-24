@@ -41,10 +41,21 @@ public class FriendService {
 						ErrorCode.NOT_FOUND_USER.getMessage()));
 
 		Friend findFriend = friendRepository.findBySenderAndReceiver(findSender, findReceiver);
-		if (findFriend.getFriendStatus() == FriendStatus.PENDING) {
-			throw new AppException(ErrorCode.FRIEND_ALREADY_PENDING, ErrorCode.FRIEND_ALREADY_PENDING.getMessage());
-		} else if (findFriend.getFriendStatus() == FriendStatus.ACCEPTED) {
-			throw new AppException(ErrorCode.FRIEND_ALREADY_ACCEPTED, ErrorCode.FRIEND_ALREADY_ACCEPTED.getMessage());
+
+		if (findFriend != null) {
+			if (findFriend.getFriendStatus() == FriendStatus.PENDING) {
+				throw new AppException(ErrorCode.FRIEND_ALREADY_PENDING, ErrorCode.FRIEND_ALREADY_PENDING.getMessage());
+			} else if (findFriend.getFriendStatus() == FriendStatus.ACCEPTED) {
+				throw new AppException(ErrorCode.FRIEND_ALREADY_ACCEPTED,
+						ErrorCode.FRIEND_ALREADY_ACCEPTED.getMessage());
+			}
+
+			findFriend.updateFriend(findSender, findReceiver, FriendStatus.PENDING);
+			return FriendCreateResponse.builder()
+					.id(findFriend.getId())
+					.receiverId(findFriend.getReceiver().getId())
+					.friendStatus(findFriend.getFriendStatus())
+					.build();
 		}
 
 		Friend friend = Friend.builder()
