@@ -38,5 +38,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "AND u.sub != ''")
     List<User> findBySocialPlatformAndSub(@Param("platform") SocialPlatform platform, @Param("sub") String sub);
 
-    List<User> findAllByNicknameContains(String nickname);
+    List<User> findAllByNicknameContainsAndIdNot(String nickname, Long myId);
 }
