@@ -36,7 +36,7 @@ public class FriendService {
 	private final NotificationService notificationService;
 
 	@Transactional
-	public FriendCreateResponse createFriend(Long userId, FriendCreateRequest request) { //TODO: 친구 조회 방식  다시 생각해보기
+	public FriendCreateResponse createFriend(Long userId, FriendCreateRequest request) {
 		User findSender = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER,
 				ErrorCode.NOT_FOUND_USER.getMessage()));
 		User findReceiver = userRepository.findById(request.getReceiverId())
@@ -121,7 +121,7 @@ public class FriendService {
 		List<User> searchFriends = userRepository.findAllByNicknameContainsAndIdNot(nickname, userId);
 
 		if (searchFriends.isEmpty()) {
-			throw new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage());
+			return List.of();
 		}
 
 		return searchFriends.stream()
@@ -169,7 +169,7 @@ public class FriendService {
 		List<Friend> findFriends = friendRepository.findFriend(userId);
 
 		if (findFriends.isEmpty()) {
-			throw new AppException(ErrorCode.NOT_FOUND_FRIEND, ErrorCode.NOT_FOUND_FRIEND.getMessage());
+			return List.of();
 		}
 
 		LocalDateTime now = LocalDateTime.now();

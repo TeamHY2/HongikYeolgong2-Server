@@ -61,7 +61,7 @@ public class NotificationService {
 		List<Notification> findNotifications = notificationRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(userId, false);
 
 		if (findNotifications.isEmpty()) {
-			throw new AppException(ErrorCode.NOT_FOUND_NOTIFICATION, ErrorCode.NOT_FOUND_NOTIFICATION.getMessage());
+			return List.of();
 		}
 
 		return findNotifications.stream()
