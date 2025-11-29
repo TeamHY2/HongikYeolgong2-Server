@@ -42,7 +42,7 @@ public class FriendController {
 
 	@PostMapping()
 	@Operation(summary = "친구 요청 전송 API", description = "친구 요청 전송 API. 요청 받는 사람의 id를 receiverId로 요청값에 담아주세요.")
-	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE,
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER,
 			FRIEND_ALREADY_PENDING, FRIEND_ALREADY_ACCEPTED})
 	public ApiResponse<FriendCreateResponse> createFriend(Authentication authentication,
 														  @RequestBody FriendCreateRequest request) {
@@ -51,7 +51,7 @@ public class FriendController {
 
 	@PatchMapping()
 	@Operation(summary = "친구 요청 수락/거절 API", description = "친구 요청 수락/거절 API. senderId와 friendStatus를 요청 값에 담아주세요.")
-	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE,
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER,
 			NOT_FOUND_FRIEND_REQUEST})
 	public ApiResponse<FriendUpdateResponse> updateFriend(Authentication authentication,
 														  @RequestBody FriendUpdateRequest request) {
@@ -63,14 +63,14 @@ public class FriendController {
 	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER,
 			NOT_FOUND_FRIEND})
 	public ApiResponse<Void> cancelFriend(Authentication authentication,
-														  @RequestBody FriendCancelRequest request) {
+										  @RequestBody FriendCancelRequest request) {
 		friendService.cancelFriend(Long.parseLong(authentication.getName()), request);
 		return ApiResponse.ok();
 	}
 
 	@GetMapping
 	@Operation(summary = "친구 추가 검색 API", description = "친구 추가 검색 API. nickname을 요청 값에 담아주세요.")
-	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE})
 	public ApiResponse<List<FriendSearchResponse>> getFriend(Authentication authentication,
 															 @RequestParam String nickname) {
 		return ApiResponse.ok(friendService.getFriend(Long.parseLong(authentication.getName()), nickname));
@@ -78,8 +78,7 @@ public class FriendController {
 
 	@GetMapping("/study")
 	@Operation(summary = "친구 열람실 이용시간 목록 조회 API", description = "친구 열람실 이용시간 목록 조회 API. DateType을 요청 값에 담아주세요.")
-	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER,
-			NOT_FOUND_FRIEND})
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
 	public ApiResponse<List<FriendStudyResponse>> getFriendStudy(Authentication authentication,
 																 @RequestParam DateType dateType) {
 		return ApiResponse.ok(friendService.getFriendStudy(Long.parseLong(authentication.getName()), dateType));
