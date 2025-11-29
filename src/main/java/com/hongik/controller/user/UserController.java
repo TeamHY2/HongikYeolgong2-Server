@@ -30,7 +30,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Hidden
+//    @Hidden
     @Operation(summary = "회원가입", description = "회원가입을 합니다.")
     @PostMapping("/sign-up")
     public ApiResponse<UserResponse> singUp(@Valid @RequestBody UserCreateRequest request) {

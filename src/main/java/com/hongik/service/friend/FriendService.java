@@ -8,6 +8,7 @@ import com.hongik.domain.study.StudySession;
 import com.hongik.domain.study.StudySessionRepository;
 import com.hongik.domain.user.User;
 import com.hongik.domain.user.UserRepository;
+import com.hongik.dto.friend.request.FriendCancelRequest;
 import com.hongik.dto.friend.request.FriendCreateRequest;
 import com.hongik.dto.friend.request.FriendUpdateRequest;
 import com.hongik.dto.friend.response.FriendCreateResponse;
@@ -16,10 +17,11 @@ import com.hongik.dto.friend.response.FriendStudyResponse;
 import com.hongik.dto.friend.response.FriendUpdateResponse;
 import com.hongik.exception.AppException;
 import com.hongik.exception.ErrorCode;
+import com.hongik.service.notification.NotificationService;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,16 +33,17 @@ public class FriendService {
 	private final FriendRepository friendRepository;
 	private final UserRepository userRepository;
 	private final StudySessionRepository studySessionRepository;
+	private final NotificationService notificationService;
 
 	@Transactional
-	public FriendCreateResponse createFriend(Long userId, FriendCreateRequest request) {
+	public FriendCreateResponse createFriend(Long userId, FriendCreateRequest request) { //TODO: 친구 조회 방식  다시 생각해보기
 		User findSender = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER,
 				ErrorCode.NOT_FOUND_USER.getMessage()));
 		User findReceiver = userRepository.findById(request.getReceiverId())
 				.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER,
 						ErrorCode.NOT_FOUND_USER.getMessage()));
 
-		Friend findFriend = friendRepository.findBySenderAndReceiver(findSender, findReceiver);
+		Friend findFriend = friendRepository.findFriendRelation(findSender.getId(), findReceiver.getId()).orElse(null);
 
 		if (findFriend != null) {
 			if (findFriend.getFriendStatus() == FriendStatus.PENDING) {
@@ -51,6 +54,8 @@ public class FriendService {
 			}
 
 			findFriend.updateFriend(findSender, findReceiver, FriendStatus.PENDING);
+			notificationService.createNotification(findFriend, findSender, findReceiver);
+
 			return FriendCreateResponse.builder()
 					.id(findFriend.getId())
 					.receiverId(findFriend.getReceiver().getId())
@@ -65,6 +70,7 @@ public class FriendService {
 				.isDeleted(false)
 				.build();
 		friendRepository.save(friend);
+		notificationService.createNotification(friend, findSender, findReceiver);
 
 		return FriendCreateResponse.builder()
 				.id(friend.getId())
@@ -84,7 +90,8 @@ public class FriendService {
 				FriendStatus.PENDING).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_FRIEND_REQUEST,
 				ErrorCode.NOT_FOUND_FRIEND_REQUEST.getMessage()));
 
-		findFriend.updateRequest(request.getFriendStatus());
+		findFriend.updateStatus(request.getFriendStatus());
+		notificationService.updateNotification(request.getNotificationId(), request.getFriendStatus());
 
 		return FriendUpdateResponse.builder()
 				.senderId(findFriend.getSender().getId())
@@ -92,8 +99,26 @@ public class FriendService {
 				.build();
 	}
 
+	@Transactional
+	public void cancelFriend(Long userId, FriendCancelRequest request) {
+		User findUser = userRepository.findById(userId)
+				.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
+		User findCancelUser = userRepository.findById(request.getCancelUserId())
+				.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
+
+		Friend findFriend = friendRepository.findBySenderAndReceiver(findUser, findCancelUser);
+
+		if (findFriend == null) {
+			throw new AppException(ErrorCode.NOT_FOUND_FRIEND, ErrorCode.NOT_FOUND_USER.getMessage());
+		}
+
+		findFriend.updateStatus(FriendStatus.CANCELED);
+		notificationService.updateNotificationWithFriend(findFriend.getId(), FriendStatus.CANCELED);
+	}
+
+	@Transactional(readOnly = true)
 	public List<FriendSearchResponse> getFriend(Long userId, String nickname) {
-		List<User> searchFriends = userRepository.findAllByNicknameContains(nickname);
+		List<User> searchFriends = userRepository.findAllByNicknameContainsAndIdNot(nickname, userId);
 
 		if (searchFriends.isEmpty()) {
 			throw new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage());
@@ -101,14 +126,39 @@ public class FriendService {
 
 		return searchFriends.stream()
 				.map(friend -> {
-					FriendStatus status = friendRepository.findFriendRelation(userId, friend.getId())
+					// 현재 두 사용자 사이의 관계 조회
+					Optional<Friend> friendRelation = friendRepository.findFriendRelation(userId, friend.getId());
+
+					FriendStatus status = friendRelation
 							.map(Friend::getFriendStatus)
 							.orElse(FriendStatus.NONE);
+
+					// 요청자/피요청자 여부 판단
+					boolean isSender = friendRelation
+							.map(r -> r.getSender().getId().equals(userId))
+							.orElse(false);
+
+					boolean canSendRequest = false;
+					boolean canCancelRequest = false;
+
+					// 상태별 처리
+					switch (status) {
+						case NONE, REJECTED, CANCELED -> {
+							canSendRequest = true;
+						}
+						case PENDING -> {
+							if (isSender) {
+								canCancelRequest = true;
+							}
+						}
+					}
 
 					return FriendSearchResponse.builder()
 							.userId(friend.getId())
 							.nickname(friend.getNickname())
 							.friendStatus(status)
+							.canSendRequest(canSendRequest)
+							.canCancelRequest(canCancelRequest)
 							.build();
 				})
 				.collect(Collectors.toList());
@@ -119,7 +169,7 @@ public class FriendService {
 		List<Friend> findFriends = friendRepository.findFriend(userId);
 
 		if (findFriends.isEmpty()) {
-			throw new AppException(ErrorCode.NOT_FOUND_FRIEND,ErrorCode.NOT_FOUND_FRIEND.getMessage());
+			throw new AppException(ErrorCode.NOT_FOUND_FRIEND, ErrorCode.NOT_FOUND_FRIEND.getMessage());
 		}
 
 		LocalDateTime now = LocalDateTime.now();
@@ -127,10 +177,10 @@ public class FriendService {
 		LocalDateTime end;
 
 		if (dateType == DateType.DAILY) {
-			start = now.toLocalDate().atStartOfDay();                   // 00:00
+			start = now.toLocalDate().atStartOfDay();
 			end = now.toLocalDate().atTime(23, 59, 59, 999_999_999);
 		} else { // MONTH
-			start = now.withDayOfMonth(1).toLocalDate().atStartOfDay();                       // 이번 달 1일 00:00
+			start = now.withDayOfMonth(1).toLocalDate().atStartOfDay();
 			end = now.withDayOfMonth(now.toLocalDate().lengthOfMonth())
 					.toLocalDate()
 					.atTime(23, 59, 59, 999_999_999);
@@ -138,21 +188,24 @@ public class FriendService {
 
 		return findFriends.stream()
 				.map(findFriend -> {
-					Long friendId= findFriend.getOtherUserId(userId);
+					Long friendId = findFriend.getOtherUserId(userId);
 
-					User friend = userRepository.findById(friendId).orElseThrow(()->new AppException(ErrorCode.NOT_FOUND_USER, ErrorCode.NOT_FOUND_USER.getMessage()));
+					User friend = userRepository.findById(friendId)
+							.orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_USER,
+									ErrorCode.NOT_FOUND_USER.getMessage()));
 
 					List<StudySession> studyTime = studySessionRepository
 							.findFriendStudyTime(friend.getId(), start, end);
 
-					// 총 공부 시간 계산
+					// 총 공부 시간
 					Duration totalDuration = studyTime.stream()
 							.map(s -> Duration.between(s.getStartTime(), s.getEndTime()))
 							.reduce(Duration.ZERO, Duration::plus);
 
-					long totalHours = totalDuration.toHours();              // 총 시간
-					long totalMinutes = totalDuration.toMinutes() % 60;    // 나머지 분
-					long totalSeconds = totalDuration.getSeconds() % 60;   // 나머지 초
+					long totalHours = totalDuration.toHours();
+					long totalMinutes = totalDuration.toMinutes() % 60;
+					long totalSeconds = totalDuration.getSeconds() % 60;
+
 					String totalTime = totalHours + ":" + totalMinutes + ":" + totalSeconds;
 
 					return FriendStudyResponse.builder()
@@ -160,8 +213,10 @@ public class FriendService {
 							.friendId(friend.getId())
 							.friendNickname(friend.getNickname())
 							.studyTime(totalTime)
+							.totalDuration(totalDuration)
 							.build();
 				})
+				.sorted((a, b) -> b.getTotalDuration().compareTo(a.getTotalDuration()))
 				.collect(Collectors.toList());
 	}
 }

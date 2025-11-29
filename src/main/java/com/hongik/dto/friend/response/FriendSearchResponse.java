@@ -15,4 +15,6 @@ public class FriendSearchResponse {
 	private Long userId;
 	private String nickname;
 	private FriendStatus friendStatus;
+	private boolean canSendRequest;
+	private boolean canCancelRequest;
 }

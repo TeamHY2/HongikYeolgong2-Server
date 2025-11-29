@@ -42,7 +42,7 @@ public class Friend extends BaseEntity {
 
 	private Boolean isDeleted;
 
-	public void updateRequest(FriendStatus friendStatus) {
+	public void updateStatus(FriendStatus friendStatus) {
 		this.friendStatus = friendStatus;
 	}
 

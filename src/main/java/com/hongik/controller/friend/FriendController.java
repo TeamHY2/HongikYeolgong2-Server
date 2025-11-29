@@ -11,6 +11,7 @@ import static com.hongik.exception.ErrorCode.REGISTRATION_INCOMPLETE;
 
 import com.hongik.domain.friend.DateType;
 import com.hongik.dto.ApiResponse;
+import com.hongik.dto.friend.request.FriendCancelRequest;
 import com.hongik.dto.friend.request.FriendCreateRequest;
 import com.hongik.dto.friend.request.FriendUpdateRequest;
 import com.hongik.dto.friend.response.FriendCreateResponse;
@@ -57,6 +58,16 @@ public class FriendController {
 		return ApiResponse.ok(friendService.updateFriend(Long.parseLong(authentication.getName()), request));
 	}
 
+	@PatchMapping("/cancel")
+	@Operation(summary = "친구 요청 취소 API", description = "친구 요청 취소 API. cancelUserId를 요청 값에 담아주세요.")
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER,
+			NOT_FOUND_FRIEND})
+	public ApiResponse<Void> cancelFriend(Authentication authentication,
+														  @RequestBody FriendCancelRequest request) {
+		friendService.cancelFriend(Long.parseLong(authentication.getName()), request);
+		return ApiResponse.ok();
+	}
+
 	@GetMapping
 	@Operation(summary = "친구 추가 검색 API", description = "친구 추가 검색 API. nickname을 요청 값에 담아주세요.")
 	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER})
@@ -67,9 +78,12 @@ public class FriendController {
 
 	@GetMapping("/study")
 	@Operation(summary = "친구 열람실 이용시간 목록 조회 API", description = "친구 열람실 이용시간 목록 조회 API. DateType을 요청 값에 담아주세요.")
-	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER, NOT_FOUND_FRIEND})
-	public ApiResponse<List<FriendStudyResponse>>getFriendStudy(Authentication authentication,
-																@RequestParam DateType dateType) {
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_USER,
+			NOT_FOUND_FRIEND})
+	public ApiResponse<List<FriendStudyResponse>> getFriendStudy(Authentication authentication,
+																 @RequestParam DateType dateType) {
 		return ApiResponse.ok(friendService.getFriendStudy(Long.parseLong(authentication.getName()), dateType));
 	}
 }
+
+
