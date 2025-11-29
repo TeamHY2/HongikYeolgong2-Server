@@ -22,14 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Notification Controller - 알림 컨트롤러", description = "알림 목록을 조회한다.")
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/notification")
+@RequestMapping("/api/v2/notifications")
 @RestController
 public class NotificationController {
 	private final NotificationService notificationService;
 
 	@GetMapping
 	@Operation(summary = "알림 목록 조회 API", description = "알림 목록 조회 API. 친구 요청 받은 항목 목록으로 조회 가능합니다.")
-	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE, NOT_FOUND_NOTIFICATION})
+	@ApiErrorCodeExamples({INVALID_JWT_EXCEPTION, INVALID_INPUT_VALUE, REGISTRATION_INCOMPLETE})
 	public ApiResponse<List<NotificationResponse>> getNotifications(Authentication authentication){
 		return ApiResponse.ok(notificationService.getNotifications(Long.parseLong(authentication.getName())));
 	}
