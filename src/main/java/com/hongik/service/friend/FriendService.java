@@ -109,11 +109,11 @@ public class FriendService {
 		Friend findFriend = friendRepository.findBySenderAndReceiver(findUser, findCancelUser);
 
 		if (findFriend == null) {
-			throw new AppException(ErrorCode.NOT_FOUND_FRIEND, ErrorCode.NOT_FOUND_USER.getMessage());
+			throw new AppException(ErrorCode.NOT_FOUND_FRIEND, ErrorCode.NOT_FOUND_FRIEND.getMessage());
 		}
 
-		findFriend.updateStatus(FriendStatus.CANCELED);
-		notificationService.updateNotificationWithFriend(findFriend.getId(), FriendStatus.CANCELED);
+		findFriend.updateStatus(FriendStatus.NONE);
+		notificationService.updateNotificationWithFriend(findFriend.getId(), FriendStatus.NONE);
 	}
 
 	@Transactional(readOnly = true)
@@ -143,7 +143,7 @@ public class FriendService {
 
 					// 상태별 처리
 					switch (status) {
-						case NONE, REJECTED, CANCELED -> {
+						case NONE, REJECTED -> {
 							canSendRequest = true;
 						}
 						case PENDING -> {
