@@ -40,18 +40,18 @@ public class NotificationService {
 				() -> new AppException(ErrorCode.NOT_FOUND_NOTIFICATION,
 						ErrorCode.NOT_FOUND_NOTIFICATION.getMessage()));
 		if (friendStatus.equals(FriendStatus.ACCEPTED) || friendStatus.equals(FriendStatus.REJECTED)
-				|| friendStatus.equals(FriendStatus.CANCELED)) {
+				|| friendStatus.equals(FriendStatus.NONE)) {
 			notification.updateIsRead(true);
 		}
 	}
 
 	@Transactional
 	public void updateNotificationWithFriend(Long friendId, FriendStatus friendStatus) {
-		Notification notification = notificationRepository.findByFriendId(friendId).orElseThrow(
+		Notification notification = notificationRepository.findTopByFriendIdOrderByCreatedAtDesc(friendId).orElseThrow(
 				() -> new AppException(ErrorCode.NOT_FOUND_NOTIFICATION,
 						ErrorCode.NOT_FOUND_NOTIFICATION.getMessage()));
 		if (friendStatus.equals(FriendStatus.ACCEPTED) || friendStatus.equals(FriendStatus.REJECTED)
-				|| friendStatus.equals(FriendStatus.CANCELED)) {
+				|| friendStatus.equals(FriendStatus.NONE)) {
 			notification.updateIsRead(true);
 		}
 	}

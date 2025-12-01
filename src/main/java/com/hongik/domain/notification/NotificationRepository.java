@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 	List<Notification> findByReceiverIdAndIsReadOrderByCreatedAtDesc(Long receiverId, boolean isRead);
 
-	Optional<Notification> findByFriendId(Long friendId);
+	Optional<Notification> findTopByFriendIdOrderByCreatedAtDesc(Long friendId);
 }
