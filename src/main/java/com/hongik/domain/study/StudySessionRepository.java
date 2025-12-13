@@ -16,6 +16,15 @@ import java.util.List;
 public interface StudySessionRepository extends JpaRepository<StudySession, Long> {
 	List<StudySession> findByEndTimeIsNull();
 
+	@Query("""
+    SELECT s
+    FROM StudySession s
+    WHERE s.user.id = :userId
+      AND s.startTime >= :start
+      AND s.endTime <= :end
+""")
+	List<StudySession> findFriendStudyTime(@Param("userId") Long userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
 	@Modifying
 	@Query("UPDATE StudySession e "
 			+ "SET e.user.id = :newUserId "
