@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 
 @Slf4j
@@ -25,13 +24,8 @@ public class CustomJwtAuthenticationEntryPoint implements AuthenticationEntryPoi
 
 
     private void setResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object messageAttr = request.getAttribute("message");
-
-        String message = (messageAttr != null)
-                ? messageAttr.toString()
-                : "인증이 필요합니다.";
-
-        if ("/error".equals(request.getRequestURI())) {
+        String message = request.getAttribute("message").toString();
+        if (request.getRequestURI().equals("/error")) {
             message = "소셜 로그인 토큰 유효기간이 만료되었습니다. 재발급해주세요";
         }
         ObjectMapper objectMapper = new ObjectMapper();
