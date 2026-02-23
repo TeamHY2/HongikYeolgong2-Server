@@ -57,3 +57,12 @@ jwt:
 
 discord:
   url: https://discord.com/api/webhooks/123456781234567812345/zxcvbnmasdfghjklqwertyuiopoiuytrewqlkjhgfdsamnbvcxz
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
