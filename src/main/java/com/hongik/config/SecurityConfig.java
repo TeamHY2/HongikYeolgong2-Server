@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/week-field").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/env").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/v1/user/join", "/api/v1/user/duplicate-nickname", "/api/v1/auth/login-google", "/api/v1/auth/login-apple","/api/v1/user/sign-up").permitAll()
                         .requestMatchers("/api/v1/token").authenticated()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new CustomJwtAuthenticationEntryPoint())
                         .accessDeniedHandler(new CustomAccessDeniedHandler()))
 
-                .addFilterAfter(new JwtFilter(jwtUtil), LoginFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
