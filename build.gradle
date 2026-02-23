@@ -61,6 +61,12 @@ dependencies {
 	//BouncyCastle 관련 라이브러리를 사용
 	implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 	implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
+
+	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	//prometheus
+	//implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 ext {
