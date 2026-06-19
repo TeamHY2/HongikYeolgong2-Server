@@ -2,7 +2,7 @@ name: HongikYeolgong2-prod CI/CD Pipeline
 
 on:
   push:
-    branches: [ "prod-migrate" ]
+    branches: [ "prod-migration" ]
 
 permissions:
   id-token: write
