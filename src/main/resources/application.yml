@@ -5,6 +5,7 @@ spring:
       local: local, common, oauth
       prod: common, prod, oauth
       dev: dev, oauth
+      prod-v2: common, prod-v2, oauth
 
 server:
   env: local
